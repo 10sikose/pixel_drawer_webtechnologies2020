@@ -1,10 +1,13 @@
-let svgNamespace = "http://www.w3.org/2000/svg";
-
-let canvas = document.getElementById('canvas');
-
 const GRID_WIDTH = 45;
 const GRID_HEIGHT = 70;
 const EMPTY_FILL = 'rgb(255, 255, 255)';
+
+let current_color = 'red';
+let is_mouse_down = false;
+
+let svgNamespace = "http://www.w3.org/2000/svg";
+
+let canvas = document.getElementById('canvas');
 
 for(let w = 0; w < GRID_WIDTH; w++)
 {
@@ -38,18 +41,37 @@ document.querySelectorAll('.row').forEach(row => {
 
 
 document.querySelectorAll('.pixel').forEach(item => {
-  item.addEventListener('click', event => {
+  item.addEventListener('mousedown', event => {
     let interior = item.firstChild;
 
     let compstyle = window.getComputedStyle(interior);
     
     if(compstyle.getPropertyValue('fill') == EMPTY_FILL)
     {
-      interior.style.fill = 'red';
+      interior.style.fill = current_color;
     }
     else
     {
       interior.style.fill = 'white';
     }   
   });
+
+  item.addEventListener('mouseover', event => {
+    let interior = item.firstChild;
+
+    let compstyle = window.getComputedStyle(interior);
+    
+    if(is_mouse_down && compstyle.getPropertyValue('fill') == EMPTY_FILL)
+    {
+      interior.style.fill = current_color;
+    }
+  });
+});
+
+document.querySelector('#canvas').addEventListener('mousedown', event => {
+  is_mouse_down = true;
+});
+
+document.addEventListener('mouseup', event => {
+  is_mouse_down = false;
 });
