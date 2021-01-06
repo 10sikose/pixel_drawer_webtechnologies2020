@@ -45,7 +45,7 @@ document.querySelectorAll('.pixel').forEach(item => {
     let interior = item.firstChild;
 
     let compstyle = window.getComputedStyle(interior);
-    
+
     if(compstyle.getPropertyValue('fill') == EMPTY_FILL)
     {
       interior.style.fill = current_color;
@@ -53,14 +53,14 @@ document.querySelectorAll('.pixel').forEach(item => {
     else
     {
       interior.style.fill = 'white';
-    }   
+    }
   });
 
   item.addEventListener('mouseover', event => {
     let interior = item.firstChild;
 
     let compstyle = window.getComputedStyle(interior);
-    
+
     if(is_mouse_down && compstyle.getPropertyValue('fill') == EMPTY_FILL)
     {
       interior.style.fill = current_color;
@@ -75,3 +75,28 @@ document.querySelector('#canvas').addEventListener('mousedown', event => {
 document.addEventListener('mouseup', event => {
   is_mouse_down = false;
 });
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////// Toolbox
+////////////////////////////////////////////////////////////////////////////////
+
+let toolbox = document.getElementById("toolbox");
+var oldx = 0;
+var oldy = 0;
+var newx = 0;
+var newy = 0;
+
+if(document.getElementById("toolboxheader"))
+{
+  document.getElementById("toolboxheader").onmousedown = function()
+  {
+    
+  }
+}
+else
+{
+
+}
