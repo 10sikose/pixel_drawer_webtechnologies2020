@@ -1,6 +1,9 @@
 const GRID_WIDTH = 45;
 const GRID_HEIGHT = 70;
-//const EMPTY_FILL = 'rgb(255, 255, 255)';
+//NOTE: THE PIXEL DIMENSIONS DEPEND ON CSS RULES
+const PIXEL_WIDTH = 15;
+const PIXEL_HEIGHT = 15;
+const MAX_ALPHA = 255;
 
 let current_color = '#ffffff';
 let empty_color = '#44475a';
@@ -141,65 +144,73 @@ document.querySelector('#save-button').addEventListener('click', event => {
 /////////////////////////////////////////////////////////////////////
 // create file - TODO: The final canvas does not save the image correctly not sure why
 // the context data is fine but in the end I get an empty file
-  var w = right - left + 1;
-  var h = bottom - top + 1;
+  let w = (right - left + 1) * 15;
+  let h = (bottom - top + 1) * 15;
 
-  buff = new Uint8ClampedArray(w * h * 4);
-  for(let ix=left; ix<=right; ix++)
-    for(let iy=top; iy<=bottom; iy++)
+  let buff = new Uint8ClampedArray(w * h * 4);
+
+  let curr_w = 0;
+  let curr_h = 0;
+
+  for(let pix = 0; pix < buff.length; pix += 4)
+  {
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    let a = 0;
+
+    let col_index = Math.floor(curr_w / PIXEL_WIDTH);
+    let row_index = Math.floor(curr_h / PIXEL_HEIGHT);
+
+    let curr_svg = canvas[row_index].childNodes[col_index].firstChild;
+
+    if(curr_svg.classList.contains('filled'))
     {
-      r = 0;
-      g = 0;
-      b = 0;
-      //console.log(document.querySelectorAll('.row')[iy].childNodes[ix].firstChild);
-      if(document.querySelectorAll('.row')[iy].childNodes[ix].firstChild.classList.contains('filled'))
-      {
-      rgb = document.querySelectorAll('.row')[iy].childNodes[ix].firstChild.style.fill;
-      //console.log(rgb);
+      let rgb = curr_svg.style.fill;
+
       rgb = rgb.substring(4,rgb.length-1);
-      //
       rgb = rgb.replace(" ", "");
       rgb = rgb.replace(" ", "");
       rgb = rgb.split(',');
 
-
       r = (+rgb[0]);
       g = (+rgb[1]);
       b = (+rgb[2]);
-
-      }
-     console.log('('+ix + ':' + ((iy-top)*w+(ix-left))*4 +  ')'+ ": "+iy+" ::: "+ r+ " - "+g+" - "+b);
-
-      buff[((iy-top)*w+(ix-left))*4]     = r;
-      buff[((iy-top)*w+(ix-left))*4 + 1] = g;
-      buff[((iy-top)*w+(ix-left))*4+ 2] = b;
-      buff[((iy-top)*w+(ix-left))*4 + 3] = 1.0;
-
-
-
+      a = MAX_ALPHA;
     }
-    var cnvas = document.createElement('canvas'),
-    ctx = cnvas.getContext('2d');
 
-    cnvas.width = w;
-    cnvas.height = h;
-  //  var imgData = ctx.createImageData(w, h);
+    buff[pix] = r;
+    buff[pix + 1] = g;
+    buff[pix + 2] = b;
+    buff[pix + 3] = a;
+
+    curr_w++;
+
+    if(curr_w == w)
+    {
+      curr_w = 0;
+      curr_h++;
+    }
+
+    if(curr_h == h)
+    {
+      break;
+    }
+
+  }
+
+  let cnvas = document.createElement('canvas'),
+  ctx = cnvas.getContext('2d');
+
+  cnvas.width = w;
+  cnvas.height = h;
+//  var imgData = ctx.createImageData(w, h);
   console.log(buff);
-    var imgData = new ImageData(buff, w, h);
-    console.log(imgData);
-    ctx.putImageData(imgData,0,0);
-    console.log(ctx.getImageData(0,0,w,h));
-    var dataUri = cnvas.toDataURL();
-    ctx2 = cnvas.getContext('2d');
-    console.log(ctx2.getImageData(0,0,w,h));
-
-    console.log(dataUri);
-
-  console.log("Top: " + top);
-  console.log("Leftmost: " + left);
-  console.log("Bottom: " + bottom);
-  console.log("Rightmost: " + right);
-
+  let imgData = new ImageData(buff, w, h);
+  //console.log(imgData);
+  ctx.putImageData(imgData,0,0);
+  let dataUri = cnvas.toDataURL();
+  console.log(dataUri);
 
 });
 
@@ -207,7 +218,7 @@ document.querySelector('#save-button').addEventListener('click', event => {
 //////////////// Toolbox
 ////////////////////////////////////////////////////////////////////////////////
 
-var color_arr = ['#9900cc', '#0000cc', '#00ccff',
+let color_arr = ['#9900cc', '#0000cc', '#00ccff',
                  '#ff00ff', '#ff3399', '#993333',
                  '#ff3300', '#ff9900', '#ffff00',
                  '#99ff33', '#339933', '#666699',
@@ -227,10 +238,10 @@ for(let idx = 0; idx<color_arr.length; idx++)
 }
 
 let toolbox = document.getElementById("toolbox");
-var oldx = 0;
-var oldy = 0;
-var newx = 0;
-var newy = 0;
+let oldx = 0;
+let oldy = 0;
+let newx = 0;
+let newy = 0;
 
 document.getElementById("toolboxheader").onmousedown = dragMouse;
 
