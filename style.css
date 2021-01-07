@@ -1,5 +1,11 @@
 body {
-    background-color: rgb(55, 65, 73);
+    background-color: #282a36;
+    text-align: center;
+}
+
+#title {
+    color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #canvas {
@@ -18,26 +24,58 @@ body {
     height: 15px;
 }
 
+.color {
+
+}
+
 .interior {
     width: 15px;
     height: 15px;
-    fill: white;
+    fill: #44475a;
     stroke: #646464;
     overflow: visible;
 }
 
+
+#red
+{
+  border: 1px solid #f00; background: #f00; width: 20px; height: 20px;
+}
+
+#blue
+{
+  border: 1px solid #00f; background: #00f; width: 20px; height: 20px;
+}
+
+#green
+{
+  border: 1px solid #0f0; background: #0f0; width: 20px; height: 20px;
+}
+
+div.constraint {
+  max-width: 100px;
+  margin: auto;
+}
+
+
 #toolbox {
   position: absolute;
-  z-index: 9;
-  background-color: #f1f1f1;
-  border: 1px solid #d3d3d3;
+  z-index: 3;
+  width: 70px;
+  background-color: #282a36;
+  border: 1px solid #6272a4;
   text-align: center;
+}
+
+#colorbox
+{
+
 }
 
 #toolboxheader {
   padding: 10px;
   cursor: move;
-  z-index: 10;
-  background-color: #2196F3;
+  z-index: 4;
+  background-color: #44475a;
   color: #fff;
 }
