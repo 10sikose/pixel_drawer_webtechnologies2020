@@ -144,8 +144,16 @@ document.querySelector('#save-button').addEventListener('click', event => {
 /////////////////////////////////////////////////////////////////////
 // create file - TODO: The final canvas does not save the image correctly not sure why
 // the context data is fine but in the end I get an empty file
+
+  //console.log("Left: " + left);
+  //console.log("Right: " + right);
+  //console.log("Bottom: " + bottom);
+  //console.log("Top: " + top);
   let w = (right - left + 1) * 15;
   let h = (bottom - top + 1) * 15;
+  
+  //console.log("Width: " + w);
+  //console.log("Height: " + h);
 
   let buff = new Uint8ClampedArray(w * h * 4);
 
@@ -159,13 +167,17 @@ document.querySelector('#save-button').addEventListener('click', event => {
     let b = 0;
     let a = 0;
 
-    let col_index = Math.floor(curr_w / PIXEL_WIDTH);
-    let row_index = Math.floor(curr_h / PIXEL_HEIGHT);
+    let col_index = left + Math.floor(curr_w / PIXEL_WIDTH);
+    let row_index = top + Math.floor(curr_h / PIXEL_HEIGHT);
 
     let curr_svg = canvas[row_index].childNodes[col_index].firstChild;
+    
+    //console.log(curr_svg);
+    //console.log(curr_w);
 
     if(curr_svg.classList.contains('filled'))
     {
+      //console.log("Filled");
       let rgb = curr_svg.style.fill;
 
       rgb = rgb.substring(4,rgb.length-1);
@@ -183,7 +195,7 @@ document.querySelector('#save-button').addEventListener('click', event => {
     buff[pix + 1] = g;
     buff[pix + 2] = b;
     buff[pix + 3] = a;
-
+    
     curr_w++;
 
     if(curr_w == w)
@@ -213,6 +225,7 @@ document.querySelector('#save-button').addEventListener('click', event => {
   console.log(dataUri);
 
 });
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////// Toolbox
