@@ -319,6 +319,7 @@ for(let i = 0; i<color_buttons.length; i++)
     {
       //console.log("I am in");
       current_color = color_buttons[i].style.backgroundColor;
+      erase = false;
     }
     else if (color_buttons[i].id == "erase"){
       current_color = empty_color;
