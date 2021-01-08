@@ -10,6 +10,13 @@ let is_mouse_down = false;
 let svgNamespace = "http://www.w3.org/2000/svg";
 
 let canvas = document.getElementById('canvas');
+let reset = document.getElementById('reset');
+
+
+//Making the reset button work
+function resetClick() {
+   window.location.reload();
+}
 
 for(let w = 0; w < GRID_WIDTH; w++)
 {
@@ -302,3 +309,7 @@ for(let i = 0; i<color_buttons.length; i++)
     }
   });
 }
+
+
+//Event Listeners for tools
+reset.addEventListener("click", resetClick); //Reset click event
