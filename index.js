@@ -1,5 +1,5 @@
-const GRID_WIDTH = 45;
-const GRID_HEIGHT = 70;
+import Grid from './view/gridView.js';
+
 //NOTE: THE PIXEL DIMENSIONS DEPEND ON CSS RULES
 const PIXEL_WIDTH = 15;
 const PIXEL_HEIGHT = 15;
@@ -10,41 +10,7 @@ let empty_color = '#44475a';
 let erase = false;
 let is_mouse_down = false;
 
-let svgNamespace = "http://www.w3.org/2000/svg";
-
-let canvas = document.getElementById('canvas');
-
-for(let w = 0; w < GRID_WIDTH; w++)
-{
-    let row = document.createElement('div');
-    row.classList.add('row')
-    canvas.appendChild(row);
-}
-
-document.querySelectorAll('.row').forEach(row => {
-
-    for(let h = 0; h < GRID_HEIGHT; h++)
-    {
-        let svg = document.createElementNS(
-            svgNamespace, 'svg'
-        );
-
-        let pixel = document.createElementNS(
-            svgNamespace, 'rect'
-        );
-
-        pixel.classList.add('interior');
-        pixel.classList.add('empty');
-
-        svg.classList.add('pixel');
-
-        svg.appendChild(pixel);
-
-        row.appendChild(svg);
-
-    }
-});
-
+let grid = new Grid();
 
 document.querySelectorAll('.pixel').forEach(item => {
   item.addEventListener('mousedown', event => {
