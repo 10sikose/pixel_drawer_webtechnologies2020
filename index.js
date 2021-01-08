@@ -1,4 +1,5 @@
-import Grid from './view/gridView.js';
+import GridView from './view/gridView.js';
+import Controller from './controller/controller.js';
 
 //NOTE: THE PIXEL DIMENSIONS DEPEND ON CSS RULES
 const PIXEL_WIDTH = 15;
@@ -10,62 +11,8 @@ let empty_color = '#44475a';
 let erase = false;
 let is_mouse_down = false;
 
-let grid = new Grid();
+let gridController = new Controller(new GridView());
 
-document.querySelectorAll('.pixel').forEach(item => {
-  item.addEventListener('mousedown', event => {
-    let interior = item.firstChild;
-
-    /*
-    if(interior.classList.contains('empty'))
-    {*/
-      interior.style.fill = current_color;
-      if (!erase){
-      interior.classList.add('filled');
-      interior.classList.remove('empty');
-      }
-      else {
-        interior.classList.add('empty');
-        interior.classList.remove('filled');
-      }
-      //console.log(interior);
-    /*    }
-
-    else
-    {
-      interior.style.fill = 'white';
-      interior.classList.remove('filled');
-      interior.classList.add('empty');
-
-    }
-    */
-  });
-
-  item.addEventListener('mouseover', event => {
-    let interior = item.firstChild;
-
-    if(is_mouse_down /*&& interior.classList.contains('empty')*/)
-    {
-      interior.style.fill = current_color;
-      if (!erase){
-      interior.classList.add('filled');
-      interior.classList.remove('empty');
-      }
-      else {
-        interior.classList.add('empty');
-        interior.classList.remove('filled');
-      }
-    }
-  });
-});
-
-document.querySelector('#canvas').addEventListener('mousedown', event => {
-  is_mouse_down = true;
-});
-
-document.addEventListener('mouseup', event => {
-  is_mouse_down = false;
-});
 
 document.querySelector('#save-button').addEventListener('click', event => {
   let top = -1;

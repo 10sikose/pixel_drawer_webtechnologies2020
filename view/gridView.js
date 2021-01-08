@@ -7,10 +7,18 @@ const GRID_HEIGHT = 70;
 //const PIXEL_HEIGHT = 15;
 const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
-export default class Grid {
+/*
+THIS IS THE UI OF THE DRAWING GRID
+*/
+
+export default class GridView {
     constructor() {
         this.gridRoot = elements.gridRoot;
 
+        this.drawGrid();
+    }
+
+    drawGrid() {
         for(let w = 0; w < GRID_WIDTH; w++)
         {
             let row = document.createElement('div');
@@ -25,10 +33,11 @@ export default class Grid {
                 let pixel = document.createElementNS(
                     SVG_NAMESPACE, 'rect'
                 );
-        
+
+                pixel.id = w + ", " + h;
                 pixel.classList.add('interior');
                 pixel.classList.add('empty');
-        
+
                 svg.classList.add('pixel');
         
                 svg.appendChild(pixel);
@@ -40,4 +49,31 @@ export default class Grid {
         }
     }
 
+    getGridRoot() {
+        return this.gridRoot;
+    }
+
+    getPixels() {
+        return document.querySelectorAll('.pixel');
+    }
+
+    fillPixel(id, color) {
+        let pixel = document.getElementById(id);
+
+        pixel.style.fill = color;
+    }
+
+    markAsFilled(id) {
+        let pixel = document.getElementById(id);
+
+        pixel.classList.add('filled');
+        pixel.classList.remove('empty');
+    }
+
+    markAsEmpty(id) {
+        let pixel = document.getElementById(id);
+
+        pixel.classList.add('empty');
+        pixel.classList.remove('filled');
+    }
 }
