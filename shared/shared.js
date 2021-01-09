@@ -1,3 +1,7 @@
+/*
+ALL SHARED CONSTANTS GO HERE
+*/
+
 export const CONSTANTS = {
     pixelWidth: 15,
     pixelHeight: 15,
