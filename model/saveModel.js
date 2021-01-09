@@ -1,14 +1,17 @@
 import { CONSTANTS } from "../shared/shared.js";
 
 export default class SaveModel {
-
-    static savePicture(grid) {
-        const limits = SaveModel._setLimits(grid);
-        SaveModel._redrawInCanvas(grid, limits);
+    constructor() {
 
     }
 
-    static _setLimits(grid) {
+    savePicture(grid) {
+        const limits = this._setLimits(grid);
+        this._redrawInCanvas(grid, limits);
+
+    }
+
+    _setLimits(grid) {
         let top = -1;
         let bottom = -1;
         let left = -1;
@@ -58,12 +61,12 @@ export default class SaveModel {
         return limits;
     }
 
-    static _redrawInCanvas(grid, limits) {
+    _redrawInCanvas(grid, limits) {
 
         let w = (limits.right - limits.left + 1) * CONSTANTS.pixelWidth;
         let h = (limits.bottom - limits.top + 1) * CONSTANTS.pixelHeight;
 
-        let buff = SaveModel._populateClampedArray(grid, limits, w, h);
+        let buff = this._populateClampedArray(grid, limits, w, h);
 
         //TEMP SOLUTION
         let cnvas = document.createElement('canvas'),
@@ -80,7 +83,7 @@ export default class SaveModel {
         console.log(dataUri);
     }
 
-    static _populateClampedArray(grid, limits, width, height) {
+    _populateClampedArray(grid, limits, width, height) {
 
         let buff = new Uint8ClampedArray(width * height * 4);
         let curr_w = 0;

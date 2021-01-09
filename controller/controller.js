@@ -1,4 +1,3 @@
-import SaveModel from '../model/saveModel.js';
 import { COLORS } from '../shared/shared.js';
 
 /*
@@ -9,9 +8,10 @@ ALL EVENT LISTENERS GO HERE
 */
 
 export default class Controller {
-    constructor(gridView, toolBoxView) {
+    constructor(gridView, toolBoxView, saveModel) {
         this._grid = gridView;
         this._toolBox = toolBoxView;
+        this._saveModel = saveModel;
         this._isMouseDown = false;
         this._erase = false;
         this._currentColor = COLORS.white;
@@ -111,7 +111,7 @@ export default class Controller {
         })
 
         this._toolBox.getSaveButton().addEventListener('click', event => {
-          SaveModel.savePicture(this._grid.getGridRoot());
+          this._saveModel.savePicture(this._grid.getGridRoot());
         });
     }
 }
