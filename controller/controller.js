@@ -1,3 +1,6 @@
+import SaveModel from '../model/saveModel.js';
+import { COLORS } from '../view/base.js';
+
 /*
 THIS IS THE MAIN CONTROLLER
 IT WILL COORDINATE THE WORKFLOW OF THE APP
@@ -6,62 +9,110 @@ ALL EVENT LISTENERS GO HERE
 */
 
 export default class Controller {
-    constructor(gridView) {
-        this.view = gridView;
-        this.isMouseDown = false;
-        this.erase = false;
-        this.currentColor = 'red';
-        this.addEventListeners();
+    constructor(gridView, toolBoxView) {
+        this._grid = gridView;
+        this._toolBox = toolBoxView;
+        this._isMouseDown = false;
+        this._erase = false;
+        this._currentColor = COLORS.white;
+        this._addEventListeners();
     }
 
-    addEventListeners() {
-        this.setMouseDown();
-        this.setMouseUp();
-        this.setMouseOver();
+    _addEventListeners() {
+        this._setMouseDown();
+        this._setMouseUp();
+        this._setMouseOver();
+        this._setMouseClick();
     }
 
-    setMouseDown() {
-        document.addEventListener('mousedown', event => {
-            this.isMouseDown = true;
+    _setMouseDown() {
+        this._grid.getGridRoot().addEventListener('mousedown', event => {
+            this._isMouseDown = true;
         });
 
-        this.view.getPixels().forEach(pixel => {
+        this._grid.getPixels().forEach(pixel => {
             pixel.addEventListener('mousedown', event => {
 
-                this.view.fillPixel(pixel.firstChild.id, this.currentColor);
+                this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
 
-                if (!this.erase){
-                  this.view.markAsFilled(pixel.firstChild.id);
+                if (!this._erase){
+                  this._grid.markAsFilled(pixel.firstChild.id);
                 }
                 else {
-                  this.view.markAsEmpty(pixel.firstChild.id);
+                  this._grid.markAsEmpty(pixel.firstChild.id);
                 }
             });
         });
-    }
 
-    setMouseUp() {
-        document.addEventListener('mouseup', event => {
-            this.isMouseDown = false;
+        this._toolBox.getHeader().addEventListener('mousedown', event => {
+            event = event || window.event;
+            event.preventDefault();
+
+            let newx = event.clientX;
+            let newy = event.clientY;
+
+            const dragElement = e => {
+              e = e || window.event;
+              e.preventDefault();
+              // calculate the new cursor position:
+              let oldx = newx - e.clientX;
+              let oldy = newy - e.clientY;
+              newx = e.clientX;
+              newy = e.clientY;
+              // set the element's new position:
+              
+              this._toolBox.setPosY(oldy);
+              this._toolBox.setPosX(oldx);
+            }
+
+            document.onmouseup = function(){document.onmouseup = null;
+                                             document.onmousemove = null}
+         
+            document.onmousemove = dragElement;
         });
     }
 
-    setMouseOver() {
-        this.view.getPixels().forEach(pixel => {
+    _setMouseUp() {
+        document.addEventListener('mouseup', event => {
+            this._isMouseDown = false;
+        });
+    }
+
+    _setMouseOver() {
+        this._grid.getPixels().forEach(pixel => {
             pixel.addEventListener('mouseover', event => {
 
-                if(this.isMouseDown)
+                if(this._isMouseDown)
                 {
-                  this.view.fillPixel(pixel.firstChild.id, this.currentColor);
+                  this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
 
-                  if (!this.erase){
-                    this.view.markAsFilled(pixel.firstChild.id);
+                  if (!this._erase){
+                    this._grid.markAsFilled(pixel.firstChild.id);
                   }
                   else {
-                    this.view.markAsEmpty(pixel.firstChild.id);
+                    this._grid.markAsEmpty(pixel.firstChild.id);
                   }
                 }
               });
+        });
+    }
+
+    _setMouseClick() {
+        this._toolBox.getColorBox().childNodes.forEach(color => {
+          color.addEventListener('click', event => {
+            this._currentColor = color.style.backgroundColor;
+            this._erase = false;
+          });
+        });
+
+        this._toolBox.getEraser().addEventListener('click', event => {
+          this._currentColor = COLORS.empty;
+          this._erase = true;
+        })
+
+        this._toolBox.getSaveButton().addEventListener('click', event => {
+          console.log('Click');
+          SaveModel.savePicture(this._grid.getGridRoot());
         });
     }
 }

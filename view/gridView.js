@@ -1,4 +1,4 @@
-import { elements } from './base.js';
+import { ELEMENTS } from './base.js';
 
 const GRID_WIDTH = 45;
 const GRID_HEIGHT = 70;
@@ -13,12 +13,12 @@ THIS IS THE UI OF THE DRAWING GRID
 
 export default class GridView {
     constructor() {
-        this.gridRoot = elements.gridRoot;
+        this._gridRoot = ELEMENTS.gridRoot;
 
-        this.drawGrid();
+        this._drawGrid();
     }
 
-    drawGrid() {
+    _drawGrid() {
         for(let w = 0; w < GRID_WIDTH; w++)
         {
             let row = document.createElement('div');
@@ -45,12 +45,12 @@ export default class GridView {
                 row.appendChild(svg);
             }
 
-            this.gridRoot.appendChild(row);
+            this._gridRoot.appendChild(row);
         }
     }
 
     getGridRoot() {
-        return this.gridRoot;
+        return this._gridRoot;
     }
 
     getPixels() {
