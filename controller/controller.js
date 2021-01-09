@@ -1,5 +1,5 @@
 import SaveModel from '../model/saveModel.js';
-import { COLORS } from '../view/base.js';
+import { COLORS } from '../shared/shared.js';
 
 /*
 THIS IS THE MAIN CONTROLLER
@@ -111,7 +111,6 @@ export default class Controller {
         })
 
         this._toolBox.getSaveButton().addEventListener('click', event => {
-          console.log('Click');
           SaveModel.savePicture(this._grid.getGridRoot());
         });
     }

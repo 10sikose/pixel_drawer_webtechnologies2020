@@ -1,4 +1,4 @@
-import { CONSTANTS } from "../shared/constants.js";
+import { CONSTANTS } from "../shared/shared.js";
 
 export default class SaveModel {
 

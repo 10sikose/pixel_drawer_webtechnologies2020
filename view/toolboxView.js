@@ -1,4 +1,4 @@
-import { ELEMENTS, COLORS } from './base.js';
+import { ELEMENTS, COLORS } from '../shared/shared.js';
 
 /*
 TOOLBOX

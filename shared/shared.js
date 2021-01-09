@@ -1,3 +1,9 @@
+export const CONSTANTS = {
+    pixelWidth: 15,
+    pixelHeight: 15,
+    maxAlpha: 255
+}
+
 export const ELEMENTS = {
     gridRoot: document.getElementById('canvas'),
     toolBoxContainer: document.getElementById("toolbox"),

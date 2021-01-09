@@ -1,4 +1,4 @@
-import { ELEMENTS } from './base.js';
+import { ELEMENTS } from '../shared/shared.js';
 
 const GRID_WIDTH = 45;
 const GRID_HEIGHT = 70;
