@@ -21,10 +21,7 @@
   </div>
 
 </div>
-
-
 <div id="canvas"></div>
-
 <script src="index.js" async defer></script>
     </body>
 </html>

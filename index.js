@@ -14,6 +14,23 @@ let svgNamespace = "http://www.w3.org/2000/svg";
 
 let canvas = document.getElementById('canvas');
 
+
+
+function saveCanvasImage() {
+let canvasData = canvas.toDataURL();
+let image_name = document.getElementById('image_name').value;
+let myVarSet = canvasData+'---'+image_name;
+let xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+   if (xhttp.readyState == 4 && xhttp.status == 200) {
+      alert(xhttp.responseText); 
+   }
+  };
+  xhttp.open("POST", "ajax_save_image.php", true);
+  xhttp.setRequestHeader("Content-Type", "application/upload");
+  xhttp.send(myVarSet);
+}
+
 for(let w = 0; w < GRID_WIDTH; w++)
 {
     let row = document.createElement('div');
