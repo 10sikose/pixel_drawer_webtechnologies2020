@@ -51,6 +51,16 @@ body {
 div.constraint {
   max-width: 100px;
   margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toolbox-icon {
+  display: block;
+  width: 40px;
+  height: 40px;
+  fill: white;
 }
 
 
@@ -59,7 +69,9 @@ div.constraint {
   z-index: 3;
   width: 70px;
   border: 1px solid #6272a4;
+  border-radius: 7px;
   text-align: center;
+  overflow: hidden;
 }
 
 #colorbox {
@@ -69,6 +81,7 @@ div.constraint {
 }
 
 #toolboxheader {
+  width: 100%;
   padding: 10px;
   cursor: move;
   z-index: 4;
