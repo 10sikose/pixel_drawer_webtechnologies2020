@@ -15,9 +15,9 @@
     <div id="colorbox">
 
     </div>
-    <button type="button" class="color" id="erase">ERASER</button>
-    <input type="text"  name="uploadImageName" id="image_name" value="">
-    <button id="save-button" class="button" onclick="saveCanvasImage();">SAVE</button>
+    <button type="button" class="color" id="eraser">ERASER</button>
+    <button id="saveButton" class="button">SAVE</button>
+   
   </div>
 
 </div>
@@ -25,6 +25,11 @@
 
 <div id="canvas"></div>
 
-<script src="index.js" async defer></script>
+<script type="module" src="./shared/shared.js" async defer></script>
+<script type="module" src="./view/gridView.js" async defer></script>
+<script type="module" src="./view/toolboxView.js" async defer></script>
+<script type="module" src="./controller/controller.js" async defer></script>
+<script type="module" src="./model/saveModel.js" async defer></script>
+<script type="module" src="index.js" async defer></script>
     </body>
 </html>
