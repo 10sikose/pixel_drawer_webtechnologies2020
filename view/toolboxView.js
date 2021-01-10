@@ -5,7 +5,7 @@ TOOLBOX
 CONTAINS COLOR PICKER, ERASER AND SAVE BUTTON
 */
 
-export default class ToolboxView {
+export default class ToolBoxView {
     constructor() {
         this._container = ELEMENTS.toolBoxContainer;
         this._header = ELEMENTS.toolBoxHeader;
@@ -13,27 +13,14 @@ export default class ToolboxView {
         this._saveButton = ELEMENTS.saveButton;
         this._eraseButton = ELEMENTS.eraseButton;
 
-        this._createColorButtons();
+        //this._createColorButtons();
+        this._setToolBox();
     }
-    
-    static color_arr = [COLORS.lightPurple, COLORS.blue, COLORS.cyan,
-                        COLORS.magenta, COLORS.pink, COLORS.brown,
-                        COLORS.red, COLORS.orange, COLORS.yellow,
-                        COLORS.lightGreen, COLORS.darkGreen, COLORS.grey,
-                        COLORS.white, COLORS.black, COLORS.darkPurple];
 
-    _createColorButtons() {
-        for(let idx = 0; idx < ToolboxView.color_arr.length; idx++)
-        {
-            let button = document.createElement('button');
-            button.classList.add('color');
-            button.style.background = ToolboxView.color_arr[idx];
-            button.style.width = '20px';
-            button.style.height = '20px';
-            button.style.border = '1px solid ' + ToolboxView.color_arr[idx];
-
-            this._colorBox.appendChild(button);
-        }
+    _setToolBox() {
+        this._container.style.backgroundColor = COLORS.toolBoxColor;
+        this._colorBox.style.backgroundColor = COLORS.toolBoxColor;
+        this._colorBox.value = COLORS.black;
     }
 
     getColorBox() {

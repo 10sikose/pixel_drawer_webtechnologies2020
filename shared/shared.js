@@ -33,5 +33,6 @@ export const COLORS = {
     white: '#ffffff',
     black: '#000000',
     darkPurple: '#660066',
-    empty: '#44475a'
+    empty: '#44475a',
+    toolBoxColor: '#282a36'
 }

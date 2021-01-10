@@ -14,36 +14,27 @@ export default class Controller {
         this._saveModel = saveModel;
         this._isMouseDown = false;
         this._erase = false;
-        this._currentColor = COLORS.white;
+        this._currentColor = COLORS.black;
         this._addEventListeners();
     }
 
     _addEventListeners() {
+        this._controlDrawing();
         this._setMouseDown();
         this._setMouseUp();
-        this._setMouseOver();
         this._setMouseClick();
+        this._setInput();
     }
 
+    //
+    //MOUSE DOWN LISTENERS
     _setMouseDown() {
+        //IF USER PRESSES MOUSE WHILE OVER GRID, SET _isMouseDown TO TRUE
         this._grid.getGridRoot().addEventListener('mousedown', event => {
-            this._isMouseDown = true;
+          this._isMouseDown = true;
         });
 
-        this._grid.getPixels().forEach(pixel => {
-            pixel.addEventListener('mousedown', event => {
-
-                this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
-
-                if (!this._erase){
-                  this._grid.markAsFilled(pixel.firstChild.id);
-                }
-                else {
-                  this._grid.markAsEmpty(pixel.firstChild.id);
-                }
-            });
-        });
-
+        //IF USER PRESSES MOUSE WHILE OVER TOOLBOX HEADER, ACTIVATE DRAGGING
         this._toolBox.getHeader().addEventListener('mousedown', event => {
             event = event || window.event;
             event.preventDefault();
@@ -72,38 +63,19 @@ export default class Controller {
         });
     }
 
+    //
+    //MOUSE UP LISTENERS
     _setMouseUp() {
+        //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
-            this._isMouseDown = false;
+          this._isMouseDown = false;
         });
+
     }
 
-    _setMouseOver() {
-        this._grid.getPixels().forEach(pixel => {
-            pixel.addEventListener('mouseover', event => {
-
-                if(this._isMouseDown)
-                {
-                  this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
-
-                  if (!this._erase){
-                    this._grid.markAsFilled(pixel.firstChild.id);
-                  }
-                  else {
-                    this._grid.markAsEmpty(pixel.firstChild.id);
-                  }
-                }
-              });
-        });
-    }
-
+    //
+    //MOUSE CLICK LISTENERS
     _setMouseClick() {
-        this._toolBox.getColorBox().childNodes.forEach(color => {
-          color.addEventListener('click', event => {
-            this._currentColor = color.style.backgroundColor;
-            this._erase = false;
-          });
-        });
 
         this._toolBox.getEraser().addEventListener('click', event => {
           this._currentColor = COLORS.empty;
@@ -113,5 +85,52 @@ export default class Controller {
         this._toolBox.getSaveButton().addEventListener('click', event => {
           this._saveModel.savePicture(this._grid.getGridRoot());
         });
+    }
+
+    //
+    //INPUT CHANGE LISTENERS
+    _setInput() {
+      this._toolBox.getColorBox().addEventListener('input', event => {
+        this._currentColor = event.target.value;
+      })
+    }
+
+    //
+    //EVENT LISTENERS FOR DRAWING ON GRID
+    _controlDrawing() {
+      //IF USER PRESSES MOUSE WHILE OVER GRID, FILL PIXELS
+      this._grid.getPixels().forEach(pixel => {
+        pixel.addEventListener('mousedown', event => {
+  
+          this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+    
+          if (!this._erase){
+            this._grid.markAsFilled(pixel.firstChild.id);
+          }
+          else {
+            this._grid.markAsEmpty(pixel.firstChild.id);
+          }
+
+        });
+      });
+
+      //IF USER MOVES MOUSE OVER GRID WHILE _isMouseDown TRUE, FILL PIXELS
+      this._grid.getPixels().forEach(pixel => {
+        pixel.addEventListener('mouseover', event => {
+
+            if(this._isMouseDown)
+            {
+              this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+
+              if (!this._erase){
+                this._grid.markAsFilled(pixel.firstChild.id);
+              }
+              else {
+                this._grid.markAsEmpty(pixel.firstChild.id);
+              }
+            }
+        });
+      });
+
     }
 }

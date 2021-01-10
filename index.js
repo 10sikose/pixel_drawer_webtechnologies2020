@@ -1,9 +1,9 @@
 import GridView from './view/gridView.js';
 import Controller from './controller/controller.js';
-import ToolboxView from './view/toolboxView.js';
+import ToolBoxView from './view/toolboxView.js';
 import SaveModel from './model/saveModel.js';
 
-let gridController = new Controller(new GridView(), new ToolboxView(), new SaveModel());
+let gridController = new Controller(new GridView(), new ToolBoxView(), new SaveModel());
 
 
 /*
