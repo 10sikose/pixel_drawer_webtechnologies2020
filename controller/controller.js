@@ -1,4 +1,4 @@
-import { COLORS } from '../shared/shared.js';
+import { COLORS, MESSAGES } from '../shared/shared.js';
 
 /*
 THIS IS THE MAIN CONTROLLER
@@ -8,9 +8,10 @@ ALL EVENT LISTENERS GO HERE
 */
 
 export default class Controller {
-    constructor(gridView, toolBoxView, saveModel) {
+    constructor(gridView, toolBoxView, messageView, saveModel) {
         this._grid = gridView;
         this._toolBox = toolBoxView;
+        this._popup = messageView;
         this._saveModel = saveModel;
         this._isMouseDown = false;
         this._erase = false;
@@ -23,6 +24,7 @@ export default class Controller {
         this._setMouseDown();
         this._setMouseUp();
         this._setMouseClick();
+        this._setMouseOver();
         this._setInput();
     }
 
@@ -83,8 +85,40 @@ export default class Controller {
         })
 
         this._toolBox.getSaveButton().addEventListener('click', event => {
-          this._saveModel.savePicture(this._grid.getGridRoot());
+          if(this._grid.isGridEmpty()) {
+            this._popup.activateFilter();
+            this._popup.setMessage(MESSAGES.emptySave);
+            this._popup.activatePopup();
+          }
+          else {
+            this._saveModel.savePicture(this._grid.getGridRoot());
+          }
+          
         });
+
+        this._toolBox.getToolBoxIcons().forEach(icon => {
+          icon.addEventListener('click', event => {
+            this._toolBox.markPressed(icon.id);
+          });
+        });
+
+        //Following two event listeners hide the popup
+        this._popup.getPopupClose().addEventListener('click', event => {
+          this._popup.deactivatePopup();
+          this._popup.deactivateFilter();
+        });
+
+        this._popup.getFilter().addEventListener('click', event => {
+          this._popup.deactivatePopup();
+          this._popup.deactivateFilter();
+        });
+    }
+
+    //
+    //MOUSE OVER LISTENERS
+    _setMouseOver() {
+      //EMPTY SO FAR, ADD THINGS IF NECESSARY
+      //IF NOTHING NEEDS TO BE ADDED, DELETE THIS FUNCTION AND ALL CALLS TO IT
     }
 
     //

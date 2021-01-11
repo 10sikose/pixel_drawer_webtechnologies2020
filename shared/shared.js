@@ -8,13 +8,22 @@ export const CONSTANTS = {
     maxAlpha: 255
 }
 
+export const MESSAGES = {
+    emptySave: "Cannot save an empty canvas"
+}
+
 export const ELEMENTS = {
     gridRoot: document.getElementById('canvas'),
     toolBoxContainer: document.getElementById("toolbox"),
     toolBoxHeader: document.getElementById("toolboxheader"),
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
-    saveButton: document.getElementById('save-button')
+    saveButton: document.getElementById('save-button'),
+    toolBoxIcons: document.querySelectorAll('.toolbox-icon'),
+    filter: document.getElementById('filter'),
+    popupContainer: document.getElementById('popup-container'),
+    popupMessage: document.getElementById('popup-message'),
+    popupClose: document.getElementById('popup-close')
 };
 
 export const COLORS = {
