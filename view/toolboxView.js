@@ -12,6 +12,7 @@ export default class ToolBoxView {
         this._colorBox = ELEMENTS.colorBox;
         this._saveButton = ELEMENTS.saveButton;
         this._eraseButton = ELEMENTS.eraseButton;
+        this._toolBoxIcons = ELEMENTS.toolBoxIcons;
 
         //this._createColorButtons();
         this._setToolBox();
@@ -22,6 +23,9 @@ export default class ToolBoxView {
         this._colorBox.style.backgroundColor = COLORS.toolBoxColor;
         this._colorBox.value = COLORS.black;
     }
+
+    //
+    //GETTERS
 
     getColorBox() {
         return this._colorBox;
@@ -43,6 +47,15 @@ export default class ToolBoxView {
         return this._container;
     }
 
+    getToolBoxIcons() {
+        return this._toolBoxIcons;
+    }
+
+    ////
+
+    //
+    //SETTERS
+
     setPosX(oldX) {
         this._container.style.left = (this._container.offsetLeft - oldX) + "px";
     }
@@ -50,4 +63,21 @@ export default class ToolBoxView {
     setPosY(oldY) {
         this._container.style.top = (this._container.offsetTop - oldY) + "px";
     }
+
+    ////
+
+    //
+    //Mark icon as pressed
+    markPressed(id) {
+        let newPressedIcon = document.getElementById(id);
+        let oldPressedIcon = document.querySelector('.pressed');
+        
+        if(oldPressedIcon) {
+          oldPressedIcon.classList.remove('pressed');  
+        }
+        
+        newPressedIcon.classList.add('pressed');
+    }
+
+
 }

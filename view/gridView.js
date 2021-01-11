@@ -49,6 +49,8 @@ export default class GridView {
         }
     }
 
+    //
+    //GETTERS
     getGridRoot() {
         return this._gridRoot;
     }
@@ -57,11 +59,14 @@ export default class GridView {
         return document.querySelectorAll('.pixel');
     }
 
+    ////
+
     fillPixel(id, color) {
         let pixel = document.getElementById(id);
 
         pixel.style.fill = color;
     }
+
 
     markAsFilled(id) {
         let pixel = document.getElementById(id);
@@ -75,5 +80,16 @@ export default class GridView {
 
         pixel.classList.add('empty');
         pixel.classList.remove('filled');
+    }
+
+    isGridEmpty() {
+        let filledPixel = document.querySelector('.filled');
+
+        if(filledPixel) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 }
