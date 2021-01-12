@@ -14,6 +14,7 @@ export default class Controller {
         this._popup = messageView;
         this._saveModel = saveModel;
         this._isMouseDown = false;
+        this._draw = true;
         this._erase = false;
         this._currentColor = COLORS.black;
         this._addEventListeners();
@@ -79,12 +80,22 @@ export default class Controller {
     //MOUSE CLICK LISTENERS
     _setMouseClick() {
 
+        this._toolBox.getDrawButton().addEventListener('click', event => {
+          this._draw = true;
+          this._currentColor = this._toolBox.getColorBox().value;
+          this._erase = false;
+        });
+
         this._toolBox.getEraser().addEventListener('click', event => {
+          this._draw = false;
           this._currentColor = COLORS.empty;
           this._erase = true;
         })
 
         this._toolBox.getSaveButton().addEventListener('click', event => {
+          this._draw = false;
+          this._erase = false;
+
           if(this._grid.isGridEmpty()) {
             this._popup.activateFilter();
             this._popup.setMessage(MESSAGES.emptySave);
@@ -136,12 +147,15 @@ export default class Controller {
       this._grid.getPixels().forEach(pixel => {
         pixel.addEventListener('mousedown', event => {
   
-          this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+          if(this._draw || this._erase) {
+            this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+          }
+          
     
-          if (!this._erase){
+          if (this._draw && !this._erase){
             this._grid.markAsFilled(pixel.firstChild.id);
           }
-          else {
+          else if(!this._draw && this._erase) {
             this._grid.markAsEmpty(pixel.firstChild.id);
           }
 
@@ -154,12 +168,14 @@ export default class Controller {
 
             if(this._isMouseDown)
             {
-              this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+              if(this._draw || this._erase) {
+                this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
+              }
 
-              if (!this._erase){
+              if (this._draw && !this._erase){
                 this._grid.markAsFilled(pixel.firstChild.id);
               }
-              else {
+              else if(!this._draw && this._erase) {
                 this._grid.markAsEmpty(pixel.firstChild.id);
               }
             }

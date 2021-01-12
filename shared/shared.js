@@ -16,6 +16,7 @@ export const ELEMENTS = {
     gridRoot: document.getElementById('canvas'),
     toolBoxContainer: document.getElementById("toolbox"),
     toolBoxHeader: document.getElementById("toolboxheader"),
+    drawButton: document.getElementById('draw'),
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
     saveButton: document.getElementById('save-button'),
