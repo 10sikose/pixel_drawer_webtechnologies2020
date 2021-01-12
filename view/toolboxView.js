@@ -9,6 +9,7 @@ export default class ToolBoxView {
     constructor() {
         this._container = ELEMENTS.toolBoxContainer;
         this._header = ELEMENTS.toolBoxHeader;
+        this._drawButton = ELEMENTS.drawButton;
         this._colorBox = ELEMENTS.colorBox;
         this._saveButton = ELEMENTS.saveButton;
         this._eraseButton = ELEMENTS.eraseButton;
@@ -27,6 +28,10 @@ export default class ToolBoxView {
     //
     //GETTERS
 
+    getDrawButton() {
+        return this._drawButton;
+    }
+    
     getColorBox() {
         return this._colorBox;
     }
