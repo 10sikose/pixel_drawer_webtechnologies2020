@@ -5,15 +5,39 @@ export default class SaveModel {
 
     }
 
-    savePicture(grid) {
-        const limits = this._setLimits(grid);
+    savePicture(grid, uncropped) {
+        let limits;
+        if(!uncropped)
+          limits = this._setLimits(grid);
+        else {
+          limits = {
+             top: 0,
+             bottom: grid.childNodes.length - 1,
+             left: 0,
+             right: grid.childNodes[0].childNodes.length -1
+         }
+        }
+
         this._redrawInCanvas(grid, limits);
 
     }
 
-    downloadPicture(grid){
+    downloadPicture(grid, uncropped){
     //  console.log("Inside SaveModel");
-      const limits = this._setLimits(grid);
+      let limits;
+      if(!uncropped)
+        limits = this._setLimits(grid);
+      else {
+        //console.log("Bottom:" + (grid.childNodes.length - 1));
+        //console.log("right:" + (grid.childNodes[0].childNodes.length - 1));
+
+         limits = {
+            top: 0,
+            bottom: grid.childNodes.length - 1,
+            left: 0,
+            right: grid.childNodes[0].childNodes.length -1
+        }
+      }
       return this._redrawInCanvas(grid, limits);
 
 

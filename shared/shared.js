@@ -20,6 +20,7 @@ export const ELEMENTS = {
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
     saveButton: document.getElementById('save-button'),
+    saveUncropped: document.getElementById('save-entire-canvas'),
     clearButton: document.getElementById('clear-button'),
     downloadButton: document.getElementById('download-button'),
     titleForm: document.getElementById('titleForm'),
@@ -28,6 +29,7 @@ export const ELEMENTS = {
     popupContainer: document.getElementById('popup-container'),
     popupMessage: document.getElementById('popup-message'),
     popupClose: document.getElementById('popup-close')
+
 
 };
 

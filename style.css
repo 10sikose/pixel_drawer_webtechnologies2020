@@ -67,6 +67,13 @@ div.constraint {
 
 }
 
+.checkbox-label{
+
+  color: #666699;
+  margin-bottom: 15px;
+
+}
+
 
 #toolbox {
   position: absolute;

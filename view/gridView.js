@@ -15,7 +15,6 @@ export default class GridView {
     constructor() {
         this._gridRoot = ELEMENTS.gridRoot;
         this._titleForm = ELEMENTS.titleForm;
-
         //this._addTitleForm();
         this._drawGrid();
 
@@ -60,6 +59,11 @@ export default class GridView {
     //GETTERS
     getGridRoot() {
         return this._gridRoot;
+    }
+
+    getSaveUncropped() {
+        console.log(ELEMENTS.saveUncropped.checked);
+        return ELEMENTS.saveUncropped.checked;
     }
 
     getTitleForm() {

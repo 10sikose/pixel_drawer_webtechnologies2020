@@ -95,6 +95,7 @@ export default class Controller {
         this._toolBox.getSaveButton().addEventListener('click', event => {
           this._draw = false;
           this._erase = false;
+          let uncropped = this._grid.getSaveUncropped();
 
           if(this._grid.isGridEmpty()) {
             this._popup.activateFilter();
@@ -102,7 +103,7 @@ export default class Controller {
             this._popup.activatePopup();
           }
           else {
-            this._saveModel.savePicture(this._grid.getGridRoot());
+            this._saveModel.savePicture(this._grid.getGridRoot(), uncropped);
           }
 
         });
@@ -110,6 +111,7 @@ export default class Controller {
         this._toolBox.getDownloadButton().addEventListener('click', event => {
           this._draw = false;
           this._erase = false;
+          let uncropped = this._grid.getSaveUncropped();
 
           if(this._grid.isGridEmpty()) {
             this._popup.activateFilter();
@@ -117,7 +119,7 @@ export default class Controller {
             this._popup.activatePopup();
           }
           else {
-            let img = this._saveModel.downloadPicture(this._grid.getGridRoot());
+            let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
             //console.log("Inside Controllers");
             let downloadLink = document.createElement('a'), ev;
             downloadLink.href = img;
@@ -198,7 +200,7 @@ export default class Controller {
         pixel.addEventListener('mousedown', event => {
           if(this._erase)
             this._currentColor = COLORS.empty;
-            
+
           if(this._draw || this._erase) {
             this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
           }
