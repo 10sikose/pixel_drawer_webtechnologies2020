@@ -56,6 +56,17 @@ div.constraint {
   box-shadow: 0px 0px 10px #6272a4;
 }
 
+.title-form{
+
+  padding: 10px 10px 10px 10px;
+  background-color: #44475a;
+  color: white;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-radius: 7px;
+
+}
+
 
 #toolbox {
   position: absolute;

@@ -11,43 +11,51 @@ export default class SaveModel {
 
     }
 
+    downloadPicture(grid){
+    //  console.log("Inside SaveModel");
+      const limits = this._setLimits(grid);
+      return this._redrawInCanvas(grid, limits);
+
+
+    }
+
     _setLimits(grid) {
         let top = -1;
         let bottom = -1;
         let left = -1;
         let right = -1;
-      
+
         let rows = grid.childNodes;
-      
+
         for(let i = 0; i < rows.length; i++)
         {
           let row = rows[i].childNodes;
           for(let j = 0; j < row.length; j++)
           {
             let pixel = row[j].firstChild;
-      
+
             if(!pixel.classList.contains('filled'))
             {
               continue;
             }
-      
+
             if(top == -1)
             {
               top = i;
             }
-      
+
             bottom = i;
-      
+
             if(left == -1 || j < left)
             {
               left = j;
             }
-      
+
             if(j > right)
             {
               right = j;
             }
-      
+
           }
         }
 
@@ -81,6 +89,8 @@ export default class SaveModel {
         ctx.putImageData(imgData,0,0);
         let dataUri = cnvas.toDataURL();
         console.log(dataUri);
+        //console.log("I am here");
+        return dataUri;
     }
 
     _populateClampedArray(grid, limits, width, height) {
@@ -120,7 +130,7 @@ export default class SaveModel {
             buff[pix + 1] = g;
             buff[pix + 2] = b;
             buff[pix + 3] = a;
-            
+
             curr_w++;
 
             if(curr_w == width)

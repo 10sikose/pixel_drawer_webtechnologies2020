@@ -20,6 +20,8 @@ export const ELEMENTS = {
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
     saveButton: document.getElementById('save-button'),
+    downloadButton: document.getElementById('download-button'),
+    titleForm: document.getElementById('titleForm'),
     toolBoxIcons: document.querySelectorAll('.toolbox-icon'),
     filter: document.getElementById('filter'),
     popupContainer: document.getElementById('popup-container'),

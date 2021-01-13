@@ -14,8 +14,14 @@ THIS IS THE UI OF THE DRAWING GRID
 export default class GridView {
     constructor() {
         this._gridRoot = ELEMENTS.gridRoot;
+        this._titleForm = ELEMENTS.titleForm;
 
+        //this._addTitleForm();
         this._drawGrid();
+
+    }
+
+    _addTitleForm() {
     }
 
     _drawGrid() {
@@ -29,7 +35,7 @@ export default class GridView {
                 let svg = document.createElementNS(
                     SVG_NAMESPACE, 'svg'
                 );
-        
+
                 let pixel = document.createElementNS(
                     SVG_NAMESPACE, 'rect'
                 );
@@ -39,9 +45,9 @@ export default class GridView {
                 pixel.classList.add('empty');
 
                 svg.classList.add('pixel');
-        
+
                 svg.appendChild(pixel);
-        
+
                 row.appendChild(svg);
             }
 
@@ -53,6 +59,10 @@ export default class GridView {
     //GETTERS
     getGridRoot() {
         return this._gridRoot;
+    }
+
+    getTitleForm() {
+        return this._titleForm;
     }
 
     getPixels() {
