@@ -20,6 +20,7 @@ export default class Controller {
         this._addEventListeners();
         this._sendData = new Object();
         this._registerWorker();
+        this._actualTimestamp = 0;
     }
 
     _addEventListeners() {
@@ -47,6 +48,7 @@ export default class Controller {
             console.log(event.data.timestamp);
             console.log(event.data.pixel);
 
+            self._actualTimestamp = event.data.timestamp;
             self._redrawGrid(event.data.pixel);
 
         };
@@ -78,6 +80,14 @@ export default class Controller {
         this._sendData.command = "GET_ACTUAL";
         this._worker.postMessage(this._sendData);
 
+
+    }
+
+    _getPrevPixel(){
+
+        this._sendData.command = "GET_PREV";
+        this._sendData.timestamp = this._actualTimestamp;
+        this._worker.postMessage(this._sendData);
 
     }
 
@@ -230,6 +240,23 @@ export default class Controller {
         });
         ////////////////// CLEAR ////////////////////////////////////////
 
+        ////////////////// PREV ////////////////////////////////////////
+        this._toolBox.getPrevButton().addEventListener('click', event => {
+
+
+            this._getPrevPixel();
+
+
+
+
+        });
+
+        ////////////////// PREV ////////////////////////////////////////
+
+
+
+
+
         this._toolBox.getToolBoxIcons().forEach(icon => {
           icon.addEventListener('click', event => {
             this._toolBox.markPressed(icon.id);
@@ -246,7 +273,10 @@ export default class Controller {
           this._popup.deactivatePopup();
           this._popup.deactivateFilter();
         });
+
+
     }
+
 
     //
     //MOUSE OVER LISTENERS

@@ -16,6 +16,8 @@ export default class ToolBoxView {
         this._toolBoxIcons = ELEMENTS.toolBoxIcons;
         this._downloadButton = ELEMENTS.downloadButton;
         this._clearButton = ELEMENTS.clearButton;
+        this._prevButton = ELEMENTS.prevButton;
+
 
         //this._createColorButtons();
         this._setToolBox();
@@ -44,6 +46,10 @@ export default class ToolBoxView {
 
     getSaveButton() {
         return this._saveButton;
+    }
+
+    getPrevButton() {
+        return this._prevButton;
     }
 
     //////////////////// GABI

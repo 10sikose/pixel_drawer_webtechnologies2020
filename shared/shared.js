@@ -20,6 +20,7 @@ export const ELEMENTS = {
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
     saveButton: document.getElementById('save-button'),
+    prevButton: document.getElementById('prev-button'),
     saveUncropped: document.getElementById('save-entire-canvas'),
     clearButton: document.getElementById('clear-button'),
     downloadButton: document.getElementById('download-button'),
