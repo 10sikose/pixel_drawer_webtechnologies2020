@@ -15,6 +15,7 @@ export default class ToolBoxView {
         this._eraseButton = ELEMENTS.eraseButton;
         this._toolBoxIcons = ELEMENTS.toolBoxIcons;
         this._downloadButton = ELEMENTS.downloadButton;
+        this._clearButton = ELEMENTS.clearButton;
 
         //this._createColorButtons();
         this._setToolBox();
@@ -31,6 +32,10 @@ export default class ToolBoxView {
 
     getDrawButton() {
         return this._drawButton;
+    }
+
+    getClearButton() {
+        return this._clearButton;
     }
 
     getColorBox() {

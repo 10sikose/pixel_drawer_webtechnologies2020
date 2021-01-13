@@ -55,6 +55,7 @@ export default class GridView {
         }
     }
 
+
     //
     //GETTERS
     getGridRoot() {
