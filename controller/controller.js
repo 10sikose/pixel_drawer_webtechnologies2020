@@ -106,7 +106,7 @@ export default class Controller {
           }
 
         });
-        ////////////////// GABI ////////////////////////////////////////
+        ////////////////// DOWNLOAD ////////////////////////////////////////
         this._toolBox.getDownloadButton().addEventListener('click', event => {
           this._draw = false;
           this._erase = false;
@@ -119,9 +119,13 @@ export default class Controller {
           else {
             let img = this._saveModel.downloadPicture(this._grid.getGridRoot());
             //console.log("Inside Controllers");
-            var downloadLink = document.createElement('a'), ev;
+            let downloadLink = document.createElement('a'), ev;
             downloadLink.href = img;
-            downloadLink.download = 'pic.png';
+            let fileName = this._grid.getTitleForm().value;
+            if (fileName == "")
+              fileName = "pic";
+
+            downloadLink.download = fileName + '.png';
 
             if (document.createEvent) {
               ev = document.createEvent("MouseEvents");
@@ -134,7 +138,7 @@ export default class Controller {
 
         });
 
-        ////////////////// GABI ////////////////////////////////////////
+        ////////////////// DOWNLOAD ////////////////////////////////////////
 
         this._toolBox.getToolBoxIcons().forEach(icon => {
           icon.addEventListener('click', event => {
