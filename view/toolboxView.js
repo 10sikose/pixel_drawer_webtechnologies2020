@@ -14,6 +14,9 @@ export default class ToolBoxView {
         this._saveButton = ELEMENTS.saveButton;
         this._eraseButton = ELEMENTS.eraseButton;
         this._toolBoxIcons = ELEMENTS.toolBoxIcons;
+        //////////////////// GABI
+        this._downloadButton = ELEMENTS.downloadButton;
+        /////////////////// GABi
 
         //this._createColorButtons();
         this._setToolBox();
@@ -31,7 +34,7 @@ export default class ToolBoxView {
     getDrawButton() {
         return this._drawButton;
     }
-    
+
     getColorBox() {
         return this._colorBox;
     }
@@ -39,6 +42,13 @@ export default class ToolBoxView {
     getSaveButton() {
         return this._saveButton;
     }
+
+    //////////////////// GABI
+    getDownloadButton() {
+        return this._downloadButton;
+    }
+    //////////////////// GABI
+
 
     getEraser() {
         return this._eraseButton;
@@ -76,11 +86,11 @@ export default class ToolBoxView {
     markPressed(id) {
         let newPressedIcon = document.getElementById(id);
         let oldPressedIcon = document.querySelector('.pressed');
-        
+
         if(oldPressedIcon) {
-          oldPressedIcon.classList.remove('pressed');  
+          oldPressedIcon.classList.remove('pressed');
         }
-        
+
         newPressedIcon.classList.add('pressed');
     }
 

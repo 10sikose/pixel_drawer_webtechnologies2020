@@ -54,14 +54,14 @@ export default class Controller {
               newx = e.clientX;
               newy = e.clientY;
               // set the element's new position:
-              
+
               this._toolBox.setPosY(oldy);
               this._toolBox.setPosX(oldx);
             }
 
             document.onmouseup = function(){document.onmouseup = null;
                                              document.onmousemove = null}
-         
+
             document.onmousemove = dragElement;
         });
     }
@@ -104,8 +104,37 @@ export default class Controller {
           else {
             this._saveModel.savePicture(this._grid.getGridRoot());
           }
-          
+
         });
+        ////////////////// GABI ////////////////////////////////////////
+        this._toolBox.getDownloadButton().addEventListener('click', event => {
+          this._draw = false;
+          this._erase = false;
+
+          if(this._grid.isGridEmpty()) {
+            this._popup.activateFilter();
+            this._popup.setMessage(MESSAGES.emptySave);
+            this._popup.activatePopup();
+          }
+          else {
+            let img = this._saveModel.downloadPicture(this._grid.getGridRoot());
+            //console.log("Inside Controllers");
+            var downloadLink = document.createElement('a'), ev;
+            downloadLink.href = img;
+            downloadLink.download = 'pic.png';
+
+            if (document.createEvent) {
+              ev = document.createEvent("MouseEvents");
+              ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+              downloadLink.dispatchEvent(ev);
+            } else if (downloadLink.fireEvent) {
+              downloadLink.fireEvent("onclick");
+            }
+            }
+
+        });
+
+        ////////////////// GABI ////////////////////////////////////////
 
         this._toolBox.getToolBoxIcons().forEach(icon => {
           icon.addEventListener('click', event => {
@@ -146,12 +175,12 @@ export default class Controller {
       //IF USER PRESSES MOUSE WHILE OVER GRID, FILL PIXELS
       this._grid.getPixels().forEach(pixel => {
         pixel.addEventListener('mousedown', event => {
-  
+
           if(this._draw || this._erase) {
             this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
           }
-          
-    
+
+
           if (this._draw && !this._erase){
             this._grid.markAsFilled(pixel.firstChild.id);
           }
