@@ -76,6 +76,16 @@ export default class GridView {
 
     ////
 
+
+    getGridWith(){
+        return GRID_HEIGHT;
+    }
+
+    getGridHeight(){
+        return  GRID_WIDTH;
+    }
+
+
     fillPixel(id, color) {
         let pixel = document.getElementById(id);
 

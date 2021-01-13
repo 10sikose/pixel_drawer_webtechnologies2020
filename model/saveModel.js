@@ -173,4 +173,64 @@ export default class SaveModel {
         return buff;
     }
 
+    _generatePixelMap(gridview) {
+
+        let grid = gridview.getGridRoot();
+        let width = gridview.getGridWith();
+        let height =  gridview.getGridHeight();
+        let buff = new Uint8ClampedArray(width * height * 4);
+        let curr_w = 0;
+        let curr_h = 0;
+
+        for(let pix = 0; pix < buff.length; pix += 4)
+        {
+            let r = 0;
+            let g = 0;
+            let b = 0;
+            let a = 0;
+
+            let col_index = curr_w;
+            let row_index = curr_h;
+
+            let curr_svg = grid.childNodes[row_index].childNodes[col_index].firstChild;
+
+            if(curr_svg.classList.contains('filled'))
+            {
+                let rgb = curr_svg.style.fill;
+
+                rgb = rgb.substring(4,rgb.length-1);
+                rgb = rgb.replace(" ", "");
+                rgb = rgb.replace(" ", "");
+                rgb = rgb.split(',');
+
+                r = (+rgb[0]);
+                g = (+rgb[1]);
+                b = (+rgb[2]);
+                a = CONSTANTS.maxAlpha;
+            }
+
+            buff[pix] = r;
+            buff[pix + 1] = g;
+            buff[pix + 2] = b;
+            buff[pix + 3] = a;
+
+            curr_w++;
+
+            if(curr_w == width)
+            {
+                curr_w = 0;
+                curr_h++;
+            }
+
+            if(curr_h == height)
+            {
+                break;
+            }
+
+        }
+
+        return buff;
+    }
+
+
 }

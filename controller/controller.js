@@ -18,6 +18,8 @@ export default class Controller {
         this._erase = false;
         this._currentColor = COLORS.black;
         this._addEventListeners();
+        this._sendData = new Object();
+        this._registerWorker();
     }
 
     _addEventListeners() {
@@ -27,6 +29,74 @@ export default class Controller {
         this._setMouseClick();
         this._setMouseOver();
         this._setInput();
+    }
+
+    _registerWorker() {
+
+        var self = this;
+
+        //Create Worker
+        if (typeof (w) == "undefined") {
+            this._worker = new Worker("./model/worker.js");
+        }
+
+        //Caller from Worker when transmitting Data
+        this._worker.onmessage = function(event){
+
+            console.log("Recieved Data from Worker");
+            console.log(event.data.timestamp);
+            console.log(event.data.pixel);
+
+            self._redrawGrid(event.data.pixel);
+
+        };
+    }
+
+    _redrawGrid(data) {
+
+        var i = 0;
+        this._grid.getPixels().forEach(pixel=>{
+
+            this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i],data[i+1],data[i+2],data[i+3]) );
+            i=i+4;
+
+
+        });
+
+    }
+
+    _autoSave(buff){
+
+        this._sendData.command = "CLEAR";
+        this._worker.postMessage(this._sendData);
+
+
+        this._sendData.command = "ADD";
+        this._sendData.pixel = buff;
+        this._worker.postMessage(this._sendData);
+
+        this._sendData.command = "GET_ACTUAL";
+        this._worker.postMessage(this._sendData);
+
+
+    }
+
+    _RGBAToHexA(r,g,b,a) {
+        r = r.toString(16);
+        g = g.toString(16);
+        b = b.toString(16);
+        a = a.toString(16);
+
+        if (r.length == 1)
+            r = "0" + r;
+        if (g.length == 1)
+            g = "0" + g;
+        if (b.length == 1)
+            b = "0" + b;
+        if (a.length == 1)
+            a = "0" + a;
+
+        return "#" + r + g + b + a;
     }
 
     //
@@ -72,6 +142,7 @@ export default class Controller {
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
           this._isMouseDown = false;
+            this._autoSave(this._saveModel._generatePixelMap(this._grid));
         });
 
     }
