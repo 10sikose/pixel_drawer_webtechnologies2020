@@ -20,6 +20,7 @@ export const ELEMENTS = {
     colorBox: document.getElementById('colorbox'),
     eraseButton: document.getElementById('eraser'),
     saveButton: document.getElementById('save-button'),
+    clearButton: document.getElementById('clear-button'),
     downloadButton: document.getElementById('download-button'),
     titleForm: document.getElementById('titleForm'),
     toolBoxIcons: document.querySelectorAll('.toolbox-icon'),
@@ -27,6 +28,7 @@ export const ELEMENTS = {
     popupContainer: document.getElementById('popup-container'),
     popupMessage: document.getElementById('popup-message'),
     popupClose: document.getElementById('popup-close')
+
 };
 
 export const COLORS = {

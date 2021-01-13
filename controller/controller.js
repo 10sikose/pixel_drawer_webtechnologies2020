@@ -140,6 +140,23 @@ export default class Controller {
 
         ////////////////// DOWNLOAD ////////////////////////////////////////
 
+        ////////////////// CLEAR ////////////////////////////////////////
+        this._toolBox.getClearButton().addEventListener('click', event => {
+          this._isMouseDown = false;
+          this._draw = true;
+          this._erase = false;
+          this._currentColor = COLORS.black;
+
+          this._grid.getPixels().forEach(pixel => {
+
+                this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
+                this._grid.markAsEmpty(pixel.firstChild.id);
+
+
+          });
+        });
+        ////////////////// CLEAR ////////////////////////////////////////
+
         this._toolBox.getToolBoxIcons().forEach(icon => {
           icon.addEventListener('click', event => {
             this._toolBox.markPressed(icon.id);
@@ -179,7 +196,9 @@ export default class Controller {
       //IF USER PRESSES MOUSE WHILE OVER GRID, FILL PIXELS
       this._grid.getPixels().forEach(pixel => {
         pixel.addEventListener('mousedown', event => {
-
+          if(this._erase)
+            this._currentColor = COLORS.empty;
+            
           if(this._draw || this._erase) {
             this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
           }
