@@ -19,6 +19,8 @@ function openDb() {
         // db = req.result;
         db = this.result;
         console.log("openDb DONE");
+        clearPixels();
+
     };
     req.onerror = function (evt) {
         console.error("openDb:", evt.target.errorCode);
@@ -31,6 +33,7 @@ function openDb() {
             objectStore.createIndex('timestamp', 'timestamp');
 
     };
+
 }
 
 openDb();
@@ -65,8 +68,8 @@ onmessage = e => {
 
 
 function clearPixels() {
-    let request = db.transaction(["buffers"], "readwrite")
-        .objectStore("buffers")
+    let request = db.transaction([DB_STORE_NAME], "readwrite")
+        .objectStore(DB_STORE_NAME)
         .clear();
 }
 

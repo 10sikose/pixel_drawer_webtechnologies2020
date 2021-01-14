@@ -59,18 +59,32 @@ export default class Controller {
         var i = 0;
         this._grid.getPixels().forEach(pixel=>{
 
-            this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i],data[i+1],data[i+2],data[i+3]) );
-            i=i+4;
+            if(data[i+4] == 1) {
+                this._grid.markAsFilled(pixel.firstChild.id);
+                this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i], data[i + 1], data[i + 2], data[i + 3]));
+            }else{
+                this._grid.markAsEmpty(pixel.firstChild.id);
+                this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
+
+
+
+            }
+
+            i=i+5;
 
 
         });
 
     }
 
-    _autoSave(buff){
+    _clearHistory(){
 
         this._sendData.command = "CLEAR";
         this._worker.postMessage(this._sendData);
+}
+
+    _autoSave(buff){
+
 
 
         this._sendData.command = "ADD";
@@ -152,10 +166,17 @@ export default class Controller {
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
           this._isMouseDown = false;
+
+        });
+
+        this._grid.getGridRoot().addEventListener('mouseup',event =>{
+
             this._autoSave(this._saveModel._generatePixelMap(this._grid));
         });
 
     }
+
+
 
     //
     //MOUSE CLICK LISTENERS
