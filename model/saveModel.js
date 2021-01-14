@@ -178,11 +178,11 @@ export default class SaveModel {
         let grid = gridview.getGridRoot();
         let width = gridview.getGridWith();
         let height =  gridview.getGridHeight();
-        let buff = new Uint8ClampedArray(width * height * 4);
+        let buff = new Uint8ClampedArray(width * height * 5);
         let curr_w = 0;
         let curr_h = 0;
 
-        for(let pix = 0; pix < buff.length; pix += 4)
+        for(let pix = 0; pix < buff.length; pix += 5)
         {
             let r = 0;
             let g = 0;
@@ -191,6 +191,7 @@ export default class SaveModel {
 
             let col_index = curr_w;
             let row_index = curr_h;
+            let filled = false;
 
             let curr_svg = grid.childNodes[row_index].childNodes[col_index].firstChild;
 
@@ -207,12 +208,16 @@ export default class SaveModel {
                 g = (+rgb[1]);
                 b = (+rgb[2]);
                 a = CONSTANTS.maxAlpha;
+                filled = true;
+
             }
 
             buff[pix] = r;
             buff[pix + 1] = g;
             buff[pix + 2] = b;
             buff[pix + 3] = a;
+            buff[pix + 4] = filled;
+
 
             curr_w++;
 
