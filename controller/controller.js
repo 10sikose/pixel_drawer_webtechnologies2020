@@ -20,7 +20,7 @@ export default class Controller {
         this._addEventListeners();
         this._sendData = new Object();
         this._registerWorker();
-        this._actualTimestamp = 0;
+        this._actualGridStep = new Object();
     }
 
     _addEventListeners() {
@@ -46,10 +46,14 @@ export default class Controller {
 
             console.log("Recieved Data from Worker");
             console.log(event.data.timestamp);
-            console.log(event.data.pixel);
+            console.log(event.data.prev_timestamp);
+            console.log(event.data.pixelMap);
 
-            self._actualTimestamp = event.data.timestamp;
-            self._redrawGrid(event.data.pixel);
+
+            self._actualGridStep = event.data;
+            self._redrawGrid(self._actualGridStep.pixelMap);
+
+
 
         };
     }
@@ -88,7 +92,9 @@ export default class Controller {
 
 
         this._sendData.command = "ADD";
-        this._sendData.pixel = buff;
+        this._sendData.pixelMap = buff;
+        this._sendData.timestamp = Date.now();
+        this._sendData.prev_timestamp = this._actualGridStep.timestamp;
         this._worker.postMessage(this._sendData);
 
         this._sendData.command = "GET_ACTUAL";
@@ -100,7 +106,9 @@ export default class Controller {
     _getPrevPixel(){
 
         this._sendData.command = "GET_PREV";
-        this._sendData.timestamp = this._actualTimestamp;
+        this._sendData.timestamp = this._actualGridStep.timestamp;
+        this._sendData.prev_timestamp = this._actualGridStep.prev_timestamp;
+
         this._worker.postMessage(this._sendData);
 
     }

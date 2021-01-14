@@ -46,8 +46,8 @@ onmessage = e => {
     console.log(`[Worker does]: ${e.data.command}`);
 
     if(e.data.command === "ADD") {
-        console.log("ADD ");
-        addPixel(e.data.pixel);
+        console.log("ADD");
+        addPixel(e.data);
     }
     else if(e.data.command === "CLEAR") {
         console.log("CLEAR");
@@ -58,7 +58,7 @@ onmessage = e => {
 
     }
     else if(e.data.command === "GET_PREV"){
-        readPrev(e.data.timestamp) ;
+        readPrev(e.data) ;
     }
 
     else if(e.data.command === "GET_NEXT"){
@@ -74,9 +74,9 @@ function clearPixels() {
 }
 
 
-function addPixel(data) {
+function addPixel(gridStep) {
 
-    const insertData = { pixel: data, timestamp: Date.now() };
+    const insertData = { pixelMap: gridStep.pixelMap, timestamp: gridStep.timestamp, prev_timestamp: gridStep.prev_timestamp };
     console.log("INSERTING");
     console.log(insertData);
 
@@ -109,7 +109,7 @@ function addPixel(data) {
 
 
 
-function readPrev(timestamp) {
+function readPrev(_actualGridStep) {
 
     var objectStore = getObjectStore(DB_STORE_NAME, 'readonly');
 
@@ -123,19 +123,17 @@ function readPrev(timestamp) {
         if (cursor) {
             console.log(cursor);
 
-            if (found == true) {
 
-                responseData.pixel = cursor.value.pixel;
-                responseData.timestamp = cursor.value.timestamp;
-                postMessage(responseData);
-
-            }
-
-            if (cursor.key == timestamp) {
+            if (cursor.value.timestamp == _actualGridStep.prev_timestamp) {
 
                 console.log("We found a row with value: " + cursor.key);
-                found = true;
-                cursor.continue();
+                responseData.pixelMap = cursor.value.pixelMap;
+                responseData.timestamp = cursor.value.timestamp;
+                responseData.prev_timestamp =cursor.value.prev_timestamp;
+
+                //addPixel(responseData);
+                postMessage(responseData);
+
 
             } else if(found == false) {
 
@@ -148,7 +146,7 @@ function readPrev(timestamp) {
 
 }
 
-function read(timestamp) {
+function read() {
 
     var objectStore = getObjectStore(DB_STORE_NAME, 'readonly');
 
@@ -159,8 +157,9 @@ function read(timestamp) {
 
             if (cursor) {
 
-                responseData.pixel= cursor.value.pixel;
+                responseData.pixelMap= cursor.value.pixelMap;
                 responseData.timestamp= cursor.value.timestamp;
+                responseData.prev_timestamp= cursor.value.prev_timestamp;
                 postMessage(responseData);
 
             }
