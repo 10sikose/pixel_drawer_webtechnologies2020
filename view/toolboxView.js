@@ -17,6 +17,7 @@ export default class ToolBoxView {
         this._downloadButton = ELEMENTS.downloadButton;
         this._clearButton = ELEMENTS.clearButton;
         this._prevButton = ELEMENTS.prevButton;
+        this._helpButton = ELEMENTS.helpButton;
 
 
         //this._createColorButtons();
@@ -38,6 +39,10 @@ export default class ToolBoxView {
 
     getClearButton() {
         return this._clearButton;
+    }
+
+    getHelpButton() {
+        return this._helpButton;
     }
 
     getColorBox() {
@@ -94,7 +99,6 @@ export default class ToolBoxView {
     //Mark icon as pressed
     markPressed(id) {
         let newPressedIcon = document.getElementById(id);
-        console.log("New pressed icon");
         console.log(newPressedIcon);
         let oldPressedIcon = document.querySelector('.pressed');
 

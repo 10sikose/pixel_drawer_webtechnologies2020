@@ -276,6 +276,16 @@ export default class Controller {
 
         ////////////////// PREV ////////////////////////////////////////
 
+        ////////////////// HELP ////////////////////////////////////////
+
+        this._toolBox.getHelpButton().addEventListener('click', event => {
+          this._popup.activateFilter();
+          this._popup.setMessage(MESSAGES.drawHelp + MESSAGES.colorHelp
+            + MESSAGES.prevHelp + MESSAGES.eraseHelp + MESSAGES.saveHelp
+            + MESSAGES.downloadHelp + MESSAGES.clearHelp);
+          this._popup.activatePopup();
+        });
+        ////////////////// HELP ////////////////////////////////////////
 
 
 
@@ -290,11 +300,14 @@ export default class Controller {
         this._popup.getPopupClose().addEventListener('click', event => {
           this._popup.deactivatePopup();
           this._popup.deactivateFilter();
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
         });
 
         this._popup.getFilter().addEventListener('click', event => {
           this._popup.deactivatePopup();
           this._popup.deactivateFilter();
+          this._draw = true;
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
         });
 
 
