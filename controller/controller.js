@@ -33,33 +33,31 @@ export default class Controller {
 
     _registerWorker() {
 
-        var self = this;
-
         //Create Worker
         if (typeof (w) == "undefined") {
             this._worker = new Worker("./model/worker.js");
         }
 
         //Caller from Worker when transmitting Data
-        this._worker.onmessage = function(event){
+        this._worker.onmessage = event => {
 
             console.log("Recieved Data from Worker");
             console.log(event.data.timestamp);
             console.log(event.data.pixel);
 
-            self._redrawGrid(event.data.pixel);
+            this._redrawGrid(event.data.pixel);
 
         };
     }
 
     _redrawGrid(data) {
 
-        var i = 0;
-        this._grid.getPixels().forEach(pixel=>{
+        let i = 0;
+
+        this._grid.getPixels().forEach(pixel => {
 
             this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i],data[i+1],data[i+2],data[i+3]) );
             i=i+4;
-
 
         });
 
