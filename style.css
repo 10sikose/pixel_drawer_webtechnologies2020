@@ -74,6 +74,37 @@ div.constraint {
 
 }
 
+/******
+Tooltip styles for toolbox icons
+******/
+
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip-container .tooltip-text {
+  visibility: hidden;
+  width: 80px;
+  background-color:  #44475a;
+  color: #ffffff;
+  text-align: center;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  padding: 5px 5px;
+
+  /* Position the tooltip */
+  position: absolute;
+  top: 10%;
+  left: 50px;
+  z-index: 4;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+}
+
+/********/
+
 
 #toolbox {
   position: absolute;
@@ -82,7 +113,7 @@ div.constraint {
   border: 1px solid #6272a4;
   border-radius: 7px;
   text-align: center;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 #colorbox {
@@ -99,6 +130,7 @@ div.constraint {
   background-color: #44475a;
   color: #fff;
 }
+
 
 /******
 Filter overlay during popup messages

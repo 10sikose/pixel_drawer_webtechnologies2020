@@ -20,6 +20,7 @@ export default class Controller {
         this._addEventListeners();
         this._sendData = new Object();
         this._registerWorker();
+        this._actualGridStep = new Object();
     }
 
     _addEventListeners() {
@@ -43,9 +44,15 @@ export default class Controller {
 
             console.log("Recieved Data from Worker");
             console.log(event.data.timestamp);
-            console.log(event.data.pixel);
+            console.log(event.data.prev_timestamp);
+            console.log(event.data.pixelMap);
 
-            this._redrawGrid(event.data.pixel);
+
+            this._actualGridStep = event.data;
+            this._redrawGrid(this._actualGridStep.pixelMap);
+            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+
 
         };
     }
@@ -56,26 +63,52 @@ export default class Controller {
 
         this._grid.getPixels().forEach(pixel => {
 
-            this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i],data[i+1],data[i+2],data[i+3]) );
-            i=i+4;
+            if(data[i+4] == 1) {
+                this._grid.markAsFilled(pixel.firstChild.id);
+                this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i], data[i + 1], data[i + 2], data[i + 3]));
+            }else{
+                this._grid.markAsEmpty(pixel.firstChild.id);
+                this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
+
+
+
+            }
+
+            i=i+5;
 
         });
 
     }
 
-    _autoSave(buff){
+    _clearHistory(){
 
         this._sendData.command = "CLEAR";
         this._worker.postMessage(this._sendData);
+}
+
+    _autoSave(buff){
+
 
 
         this._sendData.command = "ADD";
-        this._sendData.pixel = buff;
+        this._sendData.pixelMap = buff;
+        this._sendData.timestamp = Date.now();
+        this._sendData.prev_timestamp = this._actualGridStep.timestamp;
         this._worker.postMessage(this._sendData);
 
         this._sendData.command = "GET_ACTUAL";
         this._worker.postMessage(this._sendData);
 
+
+    }
+
+    _getPrevPixel(){
+
+        this._sendData.command = "GET_PREV";
+        this._sendData.timestamp = this._actualGridStep.timestamp;
+        this._sendData.prev_timestamp = this._actualGridStep.prev_timestamp;
+
+        this._worker.postMessage(this._sendData);
 
     }
 
@@ -140,10 +173,17 @@ export default class Controller {
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
           this._isMouseDown = false;
+
+        });
+
+        this._grid.getGridRoot().addEventListener('mouseup',event =>{
+
             this._autoSave(this._saveModel._generatePixelMap(this._grid));
         });
 
     }
+
+
 
     //
     //MOUSE CLICK LISTENERS
@@ -228,6 +268,18 @@ export default class Controller {
         });
         ////////////////// CLEAR ////////////////////////////////////////
 
+        ////////////////// PREV ////////////////////////////////////////
+        this._toolBox.getPrevButton().addEventListener('click', event => {
+            this._getPrevPixel();
+
+        });
+
+        ////////////////// PREV ////////////////////////////////////////
+
+
+
+
+
         this._toolBox.getToolBoxIcons().forEach(icon => {
           icon.addEventListener('click', event => {
             this._toolBox.markPressed(icon.id);
@@ -244,7 +296,10 @@ export default class Controller {
           this._popup.deactivatePopup();
           this._popup.deactivateFilter();
         });
+
+
     }
+
 
     //
     //MOUSE OVER LISTENERS
