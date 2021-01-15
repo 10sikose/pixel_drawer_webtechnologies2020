@@ -21,6 +21,7 @@ export default class Controller {
         this._sendData = new Object();
         this._registerWorker();
         this._actualGridStep = new Object();
+        this._actualGridStep.timestamp = Date.now();
     }
 
     _addEventListeners() {
@@ -51,8 +52,6 @@ export default class Controller {
             this._actualGridStep = event.data;
             this._redrawGrid(this._actualGridStep.pixelMap);
             this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
-
 
         };
     }
