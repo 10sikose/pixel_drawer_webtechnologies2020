@@ -119,7 +119,7 @@ _manageThumbnails(){
         //console.log(thumbs);
         thumbs.forEach(function(thumb) {
           if(thumb.nodeName == 'DIV'){
-            console.log(thumb.firstChild.id);
+          //  console.log(thumb.firstChild.id);
             thumb.addEventListener('dragstart', handleDragStart, false);
             thumb.addEventListener('dragenter', handleDragEnter, false);
             thumb.addEventListener('dragover', handleDragOver, false);
@@ -273,7 +273,7 @@ _manageThumbnails(){
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
           if(this._isMouseDown) {
-            this._autoSave(this._saveModel._generatePixelMap(this._grid));            
+            this._autoSave(this._saveModel._generatePixelMap(this._grid));
           }
 
           this._isMouseDown = false;
@@ -320,21 +320,21 @@ _manageThumbnails(){
             let downloadLink = document.createElement('a'), ev;
 
             let thumbs = this._grid.getThumbnailContainer().childNodes;
-            //console.log(thumbs);
-            let before = thumbs[1].firstChild.src;
-            let b_width = thumbs[1].firstChild.style.width;
-            let b_height = thumbs[1].firstChild.style.height;
+            console.log(thumbs[1].lastElementChild.src);
+            let before = thumbs[1].lastElementChild.src;
+            let b_width = thumbs[1].lastElementChild.style.width;
+            let b_height = thumbs[1].lastElementChild.style.height;
 
             for(let i = 3; i<thumbs.length; i+=2){
               if(thumbs[i].nodeName == 'DIV'){
                 //console.log(thumb.firstChild.src);
-                let inter = thumbs[i].firstChild.src;
-                let i_width = thumbs[i].firstChild.style.width;
-                let i_height = thumbs[i].firstChild.style.height;
+                let inter = thumbs[i].lastElementChild.src;
+                let i_width = thumbs[i].lastElementChild.style.width;
+                let i_height = thumbs[i].lastElementChild.style.height;
 
               //  thumbs[i].firstChild.style.width = b_width;
               //  thumbs[i].firstChild.style.height = b_height;
-                thumbs[i].firstChild.src = before;
+                thumbs[i].lastElementChild.src = before;
 
 
                 before = inter;
@@ -349,7 +349,7 @@ _manageThumbnails(){
 
 
 
-            thumbs[1].firstChild.src = img;
+            thumbs[1].lastElementChild.src = img;
 
             this._draw = true;
             this._toolBox.markPressed(this._toolBox.getDrawButton().id);
@@ -392,6 +392,37 @@ _manageThumbnails(){
 
           this._draw = true;
           this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+        });
+
+        let thumbs = this._grid.getThumbnailContainer().childNodes;
+        for(let i = 1; i<thumbs.length; i+=2)
+          thumbs[i].firstElementChild.addEventListener('click', event => {
+          console.log(thumbs[i].lastElementChild.src);
+
+          if(thumbs[i].lastElementChild.src.match(".*(empty\.png)$")) {
+            this._popup.activateFilter();
+            this._popup.setMessage(MESSAGES.emptySave);
+            this._popup.activatePopup();
+          }
+          else {
+
+            //console.log("Inside Controllers");
+            let downloadLink = document.createElement('a'), ev;
+            //console.log(thumbs[i].lastElementChild.src);
+            downloadLink.href = thumbs[i].lastElementChild.src;
+            //console.log(downloadLink.href);
+
+            downloadLink.download = (Math.floor(i/2) + 1).toString() + '.png';
+
+            if (document.createEvent) {
+              ev = document.createEvent("MouseEvents");
+              ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+              downloadLink.dispatchEvent(ev);
+            } else if (downloadLink.fireEvent) {
+              downloadLink.fireEvent("onclick");
+            }
+          }
 
         });
 
