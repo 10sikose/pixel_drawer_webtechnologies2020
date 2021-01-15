@@ -403,7 +403,6 @@ _manageThumbnails(){
           this._draw = false;
           this._erase = false;
           this._toolBox.markPressed(this._toolBox.getClearButton().id);
-          this._currentColor = COLORS.black;
 
           this._grid.getPixels().forEach(pixel => {
 
