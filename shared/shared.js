@@ -29,8 +29,9 @@ export const ELEMENTS = {
     filter: document.getElementById('filter'),
     popupContainer: document.getElementById('popup-container'),
     popupMessage: document.getElementById('popup-message'),
-    popupClose: document.getElementById('popup-close')
+    popupClose: document.getElementById('popup-close'),
 
+    thumbnailContainer: document.getElementById('thumbnail-container')
 
 };
 

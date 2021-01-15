@@ -3,6 +3,7 @@ import Controller from './controller/controller.js';
 import ToolBoxView from './view/toolboxView.js';
 import SaveModel from './model/saveModel.js';
 import MessageView from './view/messageView.js';
+import ThumbnailView from './view/thumbnailView.js';
 
 let gridController = new Controller(new GridView(), new ToolBoxView(), new MessageView(), new SaveModel());
 
@@ -34,4 +35,3 @@ function rgb2Hex(rgb)
   return '#'+r+g+b;
 }
 */
-

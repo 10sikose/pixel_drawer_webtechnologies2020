@@ -2,8 +2,15 @@ import { CONSTANTS } from "../shared/shared.js";
 
 export default class SaveModel {
     constructor() {
+      this._width = 115;
+      this._height = 38;
 
     }
+
+    getWidth(){ return this._width;}
+    getHeight(){ return this._height;}
+
+
 
     savePicture(grid, uncropped) {
         let limits;
@@ -18,7 +25,7 @@ export default class SaveModel {
          }
         }
 
-        this._redrawInCanvas(grid, limits);
+        return this._redrawInCanvas(grid, limits);
 
     }
 
@@ -98,6 +105,8 @@ export default class SaveModel {
         let w = (limits.right - limits.left + 1) * CONSTANTS.pixelWidth;
         let h = (limits.bottom - limits.top + 1) * CONSTANTS.pixelHeight;
 
+        this._width = w;
+        this._height = h;
         let buff = this._populateClampedArray(grid, limits, w, h);
 
         //TEMP SOLUTION

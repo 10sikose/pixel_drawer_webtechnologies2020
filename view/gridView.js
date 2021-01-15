@@ -15,6 +15,7 @@ export default class GridView {
     constructor() {
         this._gridRoot = ELEMENTS.gridRoot;
         this._titleForm = ELEMENTS.titleForm;
+        this._thumbnailContainer = ELEMENTS.thumbnailContainer;
         //this._addTitleForm();
         this._drawGrid();
 
@@ -62,8 +63,13 @@ export default class GridView {
     }
 
     getSaveUncropped() {
-        console.log(ELEMENTS.saveUncropped.checked);
+        //console.log(ELEMENTS.saveUncropped.checked);
         return ELEMENTS.saveUncropped.checked;
+    }
+
+
+    getThumbnailContainer(){
+      return this._thumbnailContainer;
     }
 
     getTitleForm() {
@@ -73,6 +79,8 @@ export default class GridView {
     getPixels() {
         return document.querySelectorAll('.pixel');
     }
+
+
 
     ////
 
