@@ -99,7 +99,6 @@ export default class ToolBoxView {
     //Mark icon as pressed
     markPressed(id) {
         let newPressedIcon = document.getElementById(id);
-        console.log(newPressedIcon);
         let oldPressedIcon = document.querySelector('.pressed');
 
         if(oldPressedIcon) {

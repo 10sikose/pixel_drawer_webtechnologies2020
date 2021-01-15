@@ -31,7 +31,107 @@ export default class Controller {
         this._setMouseClick();
         this._setMouseOver();
         this._setInput();
+        this._manageThumbnails();
+
     }
+
+/*
+    function handleDragStart(e) {
+        this.style.opacity = '0.4';
+      }
+
+      function handleDragEnd(e) {
+        this.style.opacity = '1';
+      }
+
+      let items = document.querySelectorAll('.container .box');
+      items.forEach(function(item) {
+        item.addEventListener('dragstart', handleDragStart, false);
+        item.addEventListener('dragend', handleDragEnd, false);
+      });
+*/
+
+_manageThumbnails(){
+
+  let dragging = null;
+
+        function handleDragStart(e) {
+          this.style.opacity = '0.5';
+
+          dragging = this;
+
+        //  console.log(":Picker Up :");
+
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', this.innerHTML);
+        //  console.log(e.dataTransfer.getData('text/html'));
+        }
+
+
+        function handleDragEnd(e) {
+          this.style.opacity = '1';
+
+          thumbs.forEach(function(thumb) {
+            if(thumb.nodeName == 'DIV'){
+              thumb.classList.remove('over');
+            }
+
+        });
+        }
+
+        function handleDragOver(e) {
+          //????
+          if (e.preventDefault) {
+            e.preventDefault();
+          }
+
+          e.dataTransfer.dropEffect = 'move';
+
+          return false;
+        }
+
+        function handleDragEnter(e) {
+          this.classList.add('over');
+          return false;
+        }
+
+        function handleDragLeave(e) {
+          this.classList.remove('over');
+        }
+
+
+          function handleDrop(e) {
+              e.stopPropagation();
+
+            //console.log(":Drop:");
+            if (dragging != this) {
+
+            //  console.log(e.dataTransfer.getData('text/html'));
+              dragging.innerHTML = this.innerHTML; //swap thumbnails
+              this.innerHTML = e.dataTransfer.getData('text/html');
+              dragging.style.opacity = '1';
+            }
+
+            return false;
+          }
+
+        let thumbs = this._grid.getThumbnailContainer().childNodes;
+        //console.log(thumbs);
+        thumbs.forEach(function(thumb) {
+          if(thumb.nodeName == 'DIV'){
+            console.log(thumb.firstChild.id);
+            thumb.addEventListener('dragstart', handleDragStart, false);
+            thumb.addEventListener('dragenter', handleDragEnter, false);
+            thumb.addEventListener('dragover', handleDragOver, false);
+            thumb.addEventListener('dragleave', handleDragLeave, false);
+            thumb.addEventListener('drop', handleDrop, false);
+            thumb.addEventListener('dragend', handleDragEnd, false);
+
+          }
+
+        });
+
+}
 
     _registerWorker() {
 
@@ -51,7 +151,6 @@ export default class Controller {
 
             this._actualGridStep = event.data;
             this._redrawGrid(this._actualGridStep.pixelMap);
-            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
 
         };
     }
@@ -133,9 +232,11 @@ export default class Controller {
     //MOUSE DOWN LISTENERS
     _setMouseDown() {
         //IF USER PRESSES MOUSE WHILE OVER GRID, SET _isMouseDown TO TRUE
-        this._grid.getGridRoot().addEventListener('mousedown', event => {
-          this._isMouseDown = true;
-        });
+        this._grid.getPixels().forEach(pixel => {
+          pixel.addEventListener('mousedown', event => {
+            this._isMouseDown = true;
+          });
+        })
 
         //IF USER PRESSES MOUSE WHILE OVER TOOLBOX HEADER, ACTIVATE DRAGGING
         this._toolBox.getHeader().addEventListener('mousedown', event => {
@@ -171,13 +272,12 @@ export default class Controller {
     _setMouseUp() {
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
+          if(this._isMouseDown) {
+            this._autoSave(this._saveModel._generatePixelMap(this._grid));            
+          }
+
           this._isMouseDown = false;
 
-        });
-
-        this._grid.getGridRoot().addEventListener('mouseup',event =>{
-
-            this._autoSave(this._saveModel._generatePixelMap(this._grid));
         });
 
     }
@@ -192,17 +292,20 @@ export default class Controller {
           this._draw = true;
           this._currentColor = this._toolBox.getColorBox().value;
           this._erase = false;
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
         });
 
         this._toolBox.getEraser().addEventListener('click', event => {
           this._draw = false;
           this._currentColor = COLORS.empty;
           this._erase = true;
+          this._toolBox.markPressed(this._toolBox.getEraser().id);
         })
 
         this._toolBox.getSaveButton().addEventListener('click', event => {
           this._draw = false;
           this._erase = false;
+          this._toolBox.markPressed(this._toolBox.getSaveButton().id);
           let uncropped = this._grid.getSaveUncropped();
 
           if(this._grid.isGridEmpty()) {
@@ -211,7 +314,47 @@ export default class Controller {
             this._popup.activatePopup();
           }
           else {
-            this._saveModel.savePicture(this._grid.getGridRoot(), uncropped);
+            //TODO: SET SAVE CAP TO 5
+
+            let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
+            let downloadLink = document.createElement('a'), ev;
+
+            let thumbs = this._grid.getThumbnailContainer().childNodes;
+            //console.log(thumbs);
+            let before = thumbs[1].firstChild.src;
+            let b_width = thumbs[1].firstChild.style.width;
+            let b_height = thumbs[1].firstChild.style.height;
+
+            for(let i = 3; i<thumbs.length; i+=2){
+              if(thumbs[i].nodeName == 'DIV'){
+                //console.log(thumb.firstChild.src);
+                let inter = thumbs[i].firstChild.src;
+                let i_width = thumbs[i].firstChild.style.width;
+                let i_height = thumbs[i].firstChild.style.height;
+
+              //  thumbs[i].firstChild.style.width = b_width;
+              //  thumbs[i].firstChild.style.height = b_height;
+                thumbs[i].firstChild.src = before;
+
+
+                before = inter;
+            //    b_width = i_width;
+              //  b_height = i_height;
+              }
+            }
+
+
+          //  thumbs[1].firstChild.style.width = '330px';
+          //  thumbs[1].firstChild.style.height = 'auto';
+
+
+
+            thumbs[1].firstChild.src = img;
+
+            this._draw = true;
+            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+
           }
 
         });
@@ -219,6 +362,7 @@ export default class Controller {
         this._toolBox.getDownloadButton().addEventListener('click', event => {
           this._draw = false;
           this._erase = false;
+          this._toolBox.markPressed(this._toolBox.getDownloadButton().id);
           let uncropped = this._grid.getSaveUncropped();
 
           if(this._grid.isGridEmpty()) {
@@ -244,7 +388,10 @@ export default class Controller {
             } else if (downloadLink.fireEvent) {
               downloadLink.fireEvent("onclick");
             }
-            }
+          }
+
+          this._draw = true;
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
 
         });
 
@@ -253,8 +400,9 @@ export default class Controller {
         ////////////////// CLEAR ////////////////////////////////////////
         this._toolBox.getClearButton().addEventListener('click', event => {
           this._isMouseDown = false;
-          this._draw = true;
+          this._draw = false;
           this._erase = false;
+          this._toolBox.markPressed(this._toolBox.getClearButton().id);
           this._currentColor = COLORS.black;
 
           this._grid.getPixels().forEach(pixel => {
@@ -264,12 +412,22 @@ export default class Controller {
 
 
           });
+
+          this._draw = true;
+
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
         });
         ////////////////// CLEAR ////////////////////////////////////////
 
         ////////////////// PREV ////////////////////////////////////////
         this._toolBox.getPrevButton().addEventListener('click', event => {
+            this._draw = false;
+            this._erase = false;
+            this._toolBox.markPressed(this._toolBox.getPrevButton().id);
             this._getPrevPixel();
+
+            this._draw = true;
+            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
 
         });
 
@@ -278,6 +436,10 @@ export default class Controller {
         ////////////////// HELP ////////////////////////////////////////
 
         this._toolBox.getHelpButton().addEventListener('click', event => {
+          this._draw = false;
+          this._erase = false;
+          this._toolBox.markPressed(this._toolBox.getHelpButton().id);
+
           this._popup.activateFilter();
           this._popup.setMessage(MESSAGES.drawHelp + MESSAGES.colorHelp
             + MESSAGES.prevHelp + MESSAGES.eraseHelp + MESSAGES.saveHelp
@@ -285,15 +447,6 @@ export default class Controller {
           this._popup.activatePopup();
         });
         ////////////////// HELP ////////////////////////////////////////
-
-
-
-
-        this._toolBox.getToolBoxIcons().forEach(icon => {
-          icon.addEventListener('click', event => {
-            this._toolBox.markPressed(icon.id);
-          });
-        });
 
         //Following two event listeners hide the popup
         this._popup.getPopupClose().addEventListener('click', event => {
