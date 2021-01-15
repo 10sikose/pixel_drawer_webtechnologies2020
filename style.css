@@ -103,6 +103,38 @@ Tooltip styles for toolbox icons
   visibility: visible;
 }
 
+.thumbnail-list-container {
+  padding-top: 30px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.thumbnail-box {
+  border: 4px solid #666;
+  border-radius: .5em;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  cursor: move;
+}
+
+.box-landscape {
+  width: 135px;
+}
+
+.box-portrait {
+  width: 330px;
+  height: fit-content;
+}
+
+
+.thumbnail-box.over {
+  border: 4px dotted #666;
+}
+
 /********/
 
 

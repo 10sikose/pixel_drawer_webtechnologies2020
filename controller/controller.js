@@ -31,6 +31,104 @@ export default class Controller {
         this._setMouseClick();
         this._setMouseOver();
         this._setInput();
+        this._manageThumbnails();
+
+    }
+
+/*
+    function handleDragStart(e) {
+        this.style.opacity = '0.4';
+      }
+
+      function handleDragEnd(e) {
+        this.style.opacity = '1';
+      }
+
+      let items = document.querySelectorAll('.container .box');
+      items.forEach(function(item) {
+        item.addEventListener('dragstart', handleDragStart, false);
+        item.addEventListener('dragend', handleDragEnd, false);
+      });
+*/
+
+    _manageThumbnails(){
+
+      var dragging = null;
+
+            function handleDragStart(e) {
+              this.style.opacity = '0.5';
+
+              dragging = this;
+
+            //  console.log(":Picker Up :");
+
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/html', this.innerHTML);
+            //  console.log(e.dataTransfer.getData('text/html'));
+            }
+
+
+            function handleDragEnd(e) {
+              this.style.opacity = '1';
+
+              thumbs.forEach(function(thumb) {
+                if(thumb.nodeName == 'DIV'){
+                  thumb.classList.remove('over');
+                }
+
+            });
+            }
+
+            function handleDragOver(e) {
+              if (e.preventDefault) {
+                e.preventDefault();
+              }
+
+              e.dataTransfer.dropEffect = 'move';
+
+              return false;
+            }
+
+            function handleDragEnter(e) {
+              this.classList.add('over');
+              return false;
+            }
+
+            function handleDragLeave(e) {
+              this.classList.remove('over');
+            }
+
+
+              function handleDrop(e) {
+                  e.stopPropagation();
+
+                //console.log(":Drop:");
+                if (dragging != this) {
+
+                //  console.log(e.dataTransfer.getData('text/html'));
+                  dragging.innerHTML = this.innerHTML; //swap thumbnails
+                  this.innerHTML = e.dataTransfer.getData('text/html');
+                }
+
+                return false;
+              }
+
+            let thumbs = this._grid.getThumbnailContainer().childNodes;
+            //console.log(thumbs);
+            thumbs.forEach(function(thumb) {
+              if(thumb.nodeName == 'DIV'){
+                console.log(thumb.firstChild.id);
+                thumb.addEventListener('dragstart', handleDragStart, false);
+                thumb.addEventListener('dragenter', handleDragEnter, false);
+                thumb.addEventListener('dragover', handleDragOver, false);
+                thumb.addEventListener('dragleave', handleDragLeave, false);
+                thumb.addEventListener('drop', handleDrop, false);
+                thumb.addEventListener('dragend', handleDragEnd, false);
+
+              }
+
+            });
+
     }
 
     _registerWorker() {
@@ -211,8 +309,44 @@ export default class Controller {
             this._popup.activatePopup();
           }
           else {
-            this._saveModel.savePicture(this._grid.getGridRoot(), uncropped);
+
+            let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
+            let downloadLink = document.createElement('a'), ev;
+
+            let thumbs = this._grid.getThumbnailContainer().childNodes;
+            //console.log(thumbs);
+            let before = thumbs[1].firstChild.src;
+            let b_width = thumbs[1].firstChild.style.width;
+            let b_height = thumbs[1].firstChild.style.height;
+
+            for(let i = 3; i<thumbs.length; i+=2){
+              if(thumbs[i].nodeName == 'DIV'){
+                //console.log(thumb.firstChild.src);
+                let inter = thumbs[i].firstChild.src;
+                let i_width = thumbs[i].firstChild.style.width;
+                let i_height = thumbs[i].firstChild.style.height;
+
+              //  thumbs[i].firstChild.style.width = b_width;
+              //  thumbs[i].firstChild.style.height = b_height;
+                thumbs[i].firstChild.src = before;
+
+
+                before = inter;
+            //    b_width = i_width;
+              //  b_height = i_height;
+              }
           }
+
+
+          //  thumbs[1].firstChild.style.width = '330px';
+          //  thumbs[1].firstChild.style.height = 'auto';
+
+
+
+          thumbs[1].firstChild.src = img;
+
+
+        }
 
         });
         ////////////////// DOWNLOAD ////////////////////////////////////////
