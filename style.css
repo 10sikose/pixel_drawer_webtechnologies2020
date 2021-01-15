@@ -164,7 +164,8 @@ IMPORTANT: Keep ordering
   height: auto;
   z-index: 4;
   background-color:  #282a36;
-  border: solid black;
+  border: solid #ffffff;
+  border-radius: 10px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -185,6 +186,20 @@ IMPORTANT: Keep ordering
   cursor: pointer;
   width: 10%;
   height: 10%;
+  fill: #ffffff;
+}
+
+#popup-message .icon {
+  position: relative;
+  top: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 5px 5px 5px 5px;
+  fill: #ffffff;
+}
+
+#popup-message p {
+  margin-bottom: 20px;
 }
 
 /*******/

@@ -32,7 +32,7 @@ export default class MessageView {
     //
     //SETTERS
     setMessage(text) {
-        this._popupMessage.textContent = text;
+        this._popupMessage.innerHTML = text;
     }
 
     ////
