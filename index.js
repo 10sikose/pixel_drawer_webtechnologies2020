@@ -5,7 +5,7 @@ import SaveModel from './model/saveModel.js';
 import MessageView from './view/messageView.js';
 import ThumbnailView from './view/thumbnailView.js';
 
-let gridController = new Controller(new GridView(), new ToolBoxView(), new MessageView(), new SaveModel());
+let gridController = new Controller(new GridView(), new ToolBoxView(), new ThumbnailView(), new MessageView(), new SaveModel());
 
 
 /*
