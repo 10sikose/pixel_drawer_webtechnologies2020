@@ -8,9 +8,10 @@ ALL EVENT LISTENERS GO HERE
 */
 
 export default class Controller {
-    constructor(gridView, toolBoxView, messageView, saveModel) {
+    constructor(gridView, toolBoxView, thumbnailView, messageView, saveModel) {
         this._grid = gridView;
         this._toolBox = toolBoxView;
+        this._thumbnails = thumbnailView;
         this._popup = messageView;
         this._saveModel = saveModel;
         this._isMouseDown = false;
@@ -29,30 +30,22 @@ export default class Controller {
 
     _addEventListeners() {
         this._controlDrawing();
-        this._setMouseDown();
-        this._setMouseUp();
-        this._setMouseClick();
-        this._setMouseOver();
-        this._setInput();
+        this._activateIsMouseDownListeners();
+        this._manageToolBoxHeader();
+        this._manageDrawButton();
+        this._manageEraseButton();
+        this._manageSaveButton();
+        this._manageDownloadButtons();
+        this._managePrevButton();
+        this._manageHelpButton();
+        this._manageClearButton();
+        this._managePopupFilter();
+        this._manageColor();
         this._manageThumbnails();
 
     }
 
-/*
-    function handleDragStart(e) {
-        this.style.opacity = '0.4';
-      }
 
-      function handleDragEnd(e) {
-        this.style.opacity = '1';
-      }
-
-      let items = document.querySelectorAll('.container .box');
-      items.forEach(function(item) {
-        item.addEventListener('dragstart', handleDragStart, false);
-        item.addEventListener('dragend', handleDragEnd, false);
-      });
-*/
 
 
 //Saves a empty pixelMap to the DB
@@ -128,7 +121,7 @@ _manageThumbnails(){
             return false;
           }
 
-        let thumbs = this._grid.getThumbnailContainer().childNodes;
+        let thumbs = this._thumbnails.getContainer().childNodes;
         //console.log(thumbs);
         thumbs.forEach(function(thumb) {
           if(thumb.nodeName == 'DIV'){
@@ -255,256 +248,231 @@ _manageThumbnails(){
         return "#" + red + green + blue + alpha;
     }
 
-    //
-    //MOUSE DOWN LISTENERS
-    _setMouseDown() {
+    _activateIsMouseDownListeners() {
         //IF USER PRESSES MOUSE WHILE OVER GRID, SET _isMouseDown TO TRUE
         this._grid.getPixels().forEach(pixel => {
           pixel.addEventListener('mousedown', event => {
             this._isMouseDown = true;
           });
-        })
-
-        //IF USER PRESSES MOUSE WHILE OVER TOOLBOX HEADER, ACTIVATE DRAGGING
-        this._toolBox.getHeader().addEventListener('mousedown', event => {
-            event = event || window.event;
-            event.preventDefault();
-
-            let newx = event.clientX;
-            let newy = event.clientY;
-
-            const dragElement = e => {
-              e = e || window.event;
-              e.preventDefault();
-              // calculate the new cursor position:
-              let oldx = newx - e.clientX;
-              let oldy = newy - e.clientY;
-              newx = e.clientX;
-              newy = e.clientY;
-              // set the element's new position:
-
-              this._toolBox.setPosY(oldy);
-              this._toolBox.setPosX(oldx);
-            }
-
-            document.onmouseup = function(){document.onmouseup = null;
-                                             document.onmousemove = null}
-
-            document.onmousemove = dragElement;
         });
-    }
 
-    //
-    //MOUSE UP LISTENERS
-    _setMouseUp() {
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
           if(this._isMouseDown) {
             this._autoSave(this._saveModel._generatePixelMap(this._grid));
           }
-
+          
           this._isMouseDown = false;
-
+          
         });
 
     }
 
+    _manageToolBoxHeader() {
+      //IF USER PRESSES MOUSE WHILE OVER TOOLBOX HEADER, ACTIVATE DRAGGING
+      this._toolBox.getHeader().addEventListener('mousedown', event => {
+        event = event || window.event;
+        event.preventDefault();
+        
+        let newx = event.clientX;
+        let newy = event.clientY;
+        
+        const dragElement = e => {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          let oldx = newx - e.clientX;
+          let oldy = newy - e.clientY;
+          newx = e.clientX;
+          newy = e.clientY;
+          // set the element's new position:
+          
+          this._toolBox.setPosY(oldy);
+          this._toolBox.setPosX(oldx);
+        }
+        
+        document.onmouseup = function(){
+          document.onmouseup = null;
+          document.onmousemove = null
+        } 
+        
+        document.onmousemove = dragElement;
+      });
+    }
 
+    _manageDrawButton() {
+      //IF USER PRESSES DRAW BUTTON, ACTIVATE DRAWING MODE
+      this._toolBox.getDrawButton().addEventListener('click', event => {
+        this._draw = true;
+        this._currentColor = this._toolBox.getColorBox().value;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+      });      
+    }
 
-    //
-    //MOUSE CLICK LISTENERS
-    _setMouseClick() {
+    _manageEraseButton() {
+      //IF USER PRESSES ERASE BUTTON, ACTIVATE ERASE MODE
+      this._toolBox.getEraser().addEventListener('click', event => {
+        this._draw = false;
+        this._currentColor = COLORS.empty;
+        this._erase = true;
+        this._toolBox.markPressed(this._toolBox.getEraser().id);
+      });
+    }
 
-        this._toolBox.getDrawButton().addEventListener('click', event => {
-          this._draw = true;
-          this._currentColor = this._toolBox.getColorBox().value;
-          this._erase = false;
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });
+    _manageSaveButton() {
+      //MANAGES THE SAVE FUNCTIONALITY
+      this._toolBox.getSaveButton().addEventListener('click', event => {
+        this._draw = false;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getSaveButton().id);
+        let uncropped = this._grid.getSaveUncropped();
 
-        this._toolBox.getEraser().addEventListener('click', event => {
-          this._draw = false;
-          this._currentColor = COLORS.empty;
-          this._erase = true;
-          this._toolBox.markPressed(this._toolBox.getEraser().id);
-        })
-
-        this._toolBox.getSaveButton().addEventListener('click', event => {
-          this._draw = false;
-          this._erase = false;
-          this._toolBox.markPressed(this._toolBox.getSaveButton().id);
-          let uncropped = this._grid.getSaveUncropped();
-
-          if(this._grid.isGridEmpty()) {
-            this._popup.activateFilter();
-            this._popup.setMessage(MESSAGES.emptySave);
-            this._popup.activatePopup();
-          }
-          else {
-            //TODO: SET SAVE CAP TO 5
-
-            let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
-            let downloadLink = document.createElement('a'), ev;
-
-            let thumbs = this._grid.getThumbnailContainer().childNodes;
-            console.log(thumbs[1].lastElementChild.src);
-            let before = thumbs[1].lastElementChild.src;
-            let b_width = thumbs[1].lastElementChild.style.width;
-            let b_height = thumbs[1].lastElementChild.style.height;
-
-            for(let i = 3; i<thumbs.length; i+=2){
-              if(thumbs[i].nodeName == 'DIV'){
-                //console.log(thumb.firstChild.src);
-                let inter = thumbs[i].lastElementChild.src;
-                let i_width = thumbs[i].lastElementChild.style.width;
-                let i_height = thumbs[i].lastElementChild.style.height;
-
-              //  thumbs[i].firstChild.style.width = b_width;
-              //  thumbs[i].firstChild.style.height = b_height;
-                thumbs[i].lastElementChild.src = before;
-
-
-                before = inter;
-            //    b_width = i_width;
-              //  b_height = i_height;
-              }
-            }
-
-
-          //  thumbs[1].firstChild.style.width = '330px';
-          //  thumbs[1].firstChild.style.height = 'auto';
-
-
-
-            thumbs[1].lastElementChild.src = img;
-
-            this._draw = true;
-            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
-
-          }
-
-        });
-        ////////////////// DOWNLOAD ////////////////////////////////////////
-        this._toolBox.getDownloadButton().addEventListener('click', event => {
-          this._draw = false;
-          this._erase = false;
-          this._toolBox.markPressed(this._toolBox.getDownloadButton().id);
-          let uncropped = this._grid.getSaveUncropped();
-
-          if(this._grid.isGridEmpty()) {
-            this._popup.activateFilter();
-            this._popup.setMessage(MESSAGES.emptySave);
-            this._popup.activatePopup();
-          }
-          else {
-            let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
-            //console.log("Inside Controllers");
-            let downloadLink = document.createElement('a'), ev;
-            downloadLink.href = img;
-            let fileName = this._grid.getTitleForm().value;
-            if (fileName == "")
-              fileName = "pic";
-
-            downloadLink.download = fileName + '.png';
-
-            if (document.createEvent) {
-              ev = document.createEvent("MouseEvents");
-              ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-              downloadLink.dispatchEvent(ev);
-            } else if (downloadLink.fireEvent) {
-              downloadLink.fireEvent("onclick");
-            }
-          }
-
-          this._draw = true;
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
-        });
-
-        let thumbs = this._grid.getThumbnailContainer().childNodes;
-        for(let i = 1; i<thumbs.length; i+=2)
-          thumbs[i].firstElementChild.addEventListener('click', event => {
-          console.log(thumbs[i].lastElementChild.src);
-
-          if(thumbs[i].lastElementChild.src.match(".*(empty\.png)$")) {
-            this._popup.activateFilter();
-            this._popup.setMessage(MESSAGES.emptySave);
-            this._popup.activatePopup();
-          }
-          else {
-
-            //console.log("Inside Controllers");
-            let downloadLink = document.createElement('a'), ev;
-            //console.log(thumbs[i].lastElementChild.src);
-            downloadLink.href = thumbs[i].lastElementChild.src;
-            //console.log(downloadLink.href);
-
-            downloadLink.download = (Math.floor(i/2) + 1).toString() + '.png';
-
-            if (document.createEvent) {
-              ev = document.createEvent("MouseEvents");
-              ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-              downloadLink.dispatchEvent(ev);
-            } else if (downloadLink.fireEvent) {
-              downloadLink.fireEvent("onclick");
-            }
-          }
-
-        });
-
-        ////////////////// DOWNLOAD ////////////////////////////////////////
-
-        ////////////////// CLEAR ////////////////////////////////////////
-        this._toolBox.getClearButton().addEventListener('click', event => {
-          this._isMouseDown = false;
-          this._draw = false;
-          this._erase = false;
-          this._toolBox.markPressed(this._toolBox.getClearButton().id);
-
-          this._grid.getPixels().forEach(pixel => {
-
-                this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
-                this._grid.markAsEmpty(pixel.firstChild.id);
-
-
-          });
-
-          this._draw = true;
-
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });
-        ////////////////// CLEAR ////////////////////////////////////////
-
-        ////////////////// PREV ////////////////////////////////////////
-        this._toolBox.getPrevButton().addEventListener('click', event => {
-            this._draw = false;
-            this._erase = false;
-            this._toolBox.markPressed(this._toolBox.getPrevButton().id);
-            this._getPrevPixel();
-
-            this._draw = true;
-            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
-        });
-
-        ////////////////// PREV ////////////////////////////////////////
-
-        ////////////////// HELP ////////////////////////////////////////
-
-        this._toolBox.getHelpButton().addEventListener('click', event => {
-          this._draw = false;
-          this._erase = false;
-          this._toolBox.markPressed(this._toolBox.getHelpButton().id);
-
+        if(this._grid.isGridEmpty()) {
           this._popup.activateFilter();
-          this._popup.setMessage(MESSAGES.drawHelp + MESSAGES.colorHelp
-            + MESSAGES.prevHelp + MESSAGES.eraseHelp + MESSAGES.saveHelp
-            + MESSAGES.downloadHelp + MESSAGES.clearHelp);
+          this._popup.setMessage(MESSAGES.emptySave);
           this._popup.activatePopup();
-        });
-        ////////////////// HELP ////////////////////////////////////////
+        }
+        else {
+          let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
+          let downloadLink = document.createElement('a'), ev;
 
+          this._thumbnails.shiftRight();
+
+          this._thumbnails.setNewThumbnail(img);
+
+          this._draw = true;
+          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+
+        }
+
+      });      
+    }
+
+    _manageDownloadButtons() {
+      //IF USER CLICKS TOOLBOX DOWNLOAD ICON, DOWNLOAD THE GRID IMAGE
+      this._toolBox.getDownloadButton().addEventListener('click', event => {
+        this._draw = false;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getDownloadButton().id);
+        let uncropped = this._grid.getSaveUncropped();
+
+        if(this._grid.isGridEmpty()) {
+          this._popup.activateFilter();
+          this._popup.setMessage(MESSAGES.emptySave);
+          this._popup.activatePopup();
+        }
+        else {
+          let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
+          //console.log("Inside Controllers");
+          let downloadLink = document.createElement('a'), ev;
+          downloadLink.href = img;
+          let fileName = this._grid.getTitleForm().value;
+          if (fileName == "")
+            fileName = "pic";
+
+          downloadLink.download = fileName + '.png';
+
+          if (document.createEvent) {
+            ev = document.createEvent("MouseEvents");
+            ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            downloadLink.dispatchEvent(ev);
+          } else if (downloadLink.fireEvent) {
+            downloadLink.fireEvent("onclick");
+          }
+        }
+
+        this._draw = true;
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+      });
+
+      //IF USER PRESSES A THUMBNAIL'S DOWNLOAD ICON, DOWNLOADS THE IMAGE
+      let thumbs = this._thumbnails.getContainer().childNodes;
+      for(let i = 1; i<thumbs.length; i+=2)
+        thumbs[i].firstElementChild.addEventListener('click', event => {
+        console.log(thumbs[i].lastElementChild.src);
+
+        if(thumbs[i].lastElementChild.src.match(".*(empty\.png)$")) {
+          this._popup.activateFilter();
+          this._popup.setMessage(MESSAGES.emptySave);
+          this._popup.activatePopup();
+        }
+        else {
+
+          //console.log("Inside Controllers");
+          let downloadLink = document.createElement('a'), ev;
+          //console.log(thumbs[i].lastElementChild.src);
+          downloadLink.href = thumbs[i].lastElementChild.src;
+          //console.log(downloadLink.href);
+
+          downloadLink.download = (Math.floor(i/2) + 1).toString() + '.png';
+
+          if (document.createEvent) {
+            ev = document.createEvent("MouseEvents");
+            ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            downloadLink.dispatchEvent(ev);
+          } else if (downloadLink.fireEvent) {
+            downloadLink.fireEvent("onclick");
+          }
+        }
+
+      });
+    }
+
+    _manageClearButton() {
+      //IF USER PRESSES CLEAR BUTTON, RESETS THE GRID
+      this._toolBox.getClearButton().addEventListener('click', event => {
+        this._isMouseDown = false;
+        this._draw = false;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getClearButton().id);
+
+        this._grid.getPixels().forEach(pixel => {
+
+              this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
+              this._grid.markAsEmpty(pixel.firstChild.id);
+
+
+        });
+
+        this._draw = true;
+
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);     
+      }); 
+    }
+
+    _managePrevButton() {
+      //IF USER PRESSES UNDO BUTTON, RESETS LATEST CHANGE(S)
+      this._toolBox.getPrevButton().addEventListener('click', event => {
+        this._draw = false;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getPrevButton().id);
+        this._getPrevPixel();
+
+        this._draw = true;
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+
+      });
+    }
+
+    _manageHelpButton() {
+      //IF USER PRESSES HELP BUTTON, A HELPFUL POPUP MESSAGE APPEARS
+      this._toolBox.getHelpButton().addEventListener('click', event => {
+        this._draw = false;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getHelpButton().id);
+
+        this._popup.activateFilter();
+        this._popup.setMessage(MESSAGES.drawHelp + MESSAGES.colorHelp
+          + MESSAGES.prevHelp + MESSAGES.eraseHelp + MESSAGES.saveHelp
+          + MESSAGES.downloadHelp + MESSAGES.clearHelp);
+        this._popup.activatePopup();
+      });      
+    }
+
+    _managePopupFilter() {
         //Following two event listeners hide the popup
         this._popup.getPopupClose().addEventListener('click', event => {
           this._popup.deactivatePopup();
@@ -517,22 +485,12 @@ _manageThumbnails(){
           this._popup.deactivateFilter();
           this._draw = true;
           this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });
-
-
+        });      
     }
 
 
-    //
-    //MOUSE OVER LISTENERS
-    _setMouseOver() {
-      //EMPTY SO FAR, ADD THINGS IF NECESSARY
-      //IF NOTHING NEEDS TO BE ADDED, DELETE THIS FUNCTION AND ALL CALLS TO IT
-    }
-
-    //
-    //INPUT CHANGE LISTENERS
-    _setInput() {
+    _manageColor() {
+      //SETS this._currentColor WHENEVER USERS PICKS A NEW COLOR
       this._toolBox.getColorBox().addEventListener('input', event => {
         this._currentColor = event.target.value;
       })

@@ -19,8 +19,6 @@ export default class ToolBoxView {
         this._prevButton = ELEMENTS.prevButton;
         this._helpButton = ELEMENTS.helpButton;
 
-
-        //this._createColorButtons();
         this._setToolBox();
     }
 
