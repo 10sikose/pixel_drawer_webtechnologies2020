@@ -22,6 +22,9 @@ export default class Controller {
         this._registerWorker();
         this._actualGridStep = new Object();
         this._actualGridStep.timestamp = Date.now();
+        this._initFirstPixelMap();
+
+
     }
 
     _addEventListeners() {
@@ -50,6 +53,16 @@ export default class Controller {
         item.addEventListener('dragend', handleDragEnd, false);
       });
 */
+
+
+//Saves a empty pixelMap to the DB
+_initFirstPixelMap(){
+    //Wait 500 msec to be sure that DB is created
+    setTimeout(() => {
+        this._autoSave(this._saveModel._generatePixelMap(this._grid));
+    }, 500);
+
+}
 
 _manageThumbnails(){
 
@@ -132,24 +145,20 @@ _manageThumbnails(){
         });
 
 }
-
+    //register the web worker
     _registerWorker() {
 
-        //Create Worker
-        if (typeof (w) == "undefined") {
+        //Create Worker, check if already created
+        if (typeof (this._worker) == "undefined") {
             this._worker = new Worker("./model/worker.js");
         }
 
-        //Caller from Worker when transmitting Data
+        //Callback when messages received from web worker
         this._worker.onmessage = event => {
 
-            console.log("Recieved Data from Worker");
-            console.log(event.data.timestamp);
-            console.log(event.data.prev_timestamp);
-            console.log(event.data.pixelMap);
-
-
+            //Update the GridStep with the latest from the DB
             this._actualGridStep = event.data;
+            //redraw grid with the latest pixelMap
             this._redrawGrid(this._actualGridStep.pixelMap);
 
         };
@@ -158,17 +167,21 @@ _manageThumbnails(){
     _redrawGrid(data) {
 
         let i = 0;
-
+        //iterate over each pixel on the grid
         this._grid.getPixels().forEach(pixel => {
 
+            //check if the actual pixel in the pixelMap is empty or filled
             if(data[i+4] == 1) {
+
+                //if filled, mark pixel grid as filled
                 this._grid.markAsFilled(pixel.firstChild.id);
-                this._grid.fillPixel(pixel.firstChild.id, this._RGBAToHexA(data[i], data[i + 1], data[i + 2], data[i + 3]));
+                //fill pixel on grid with the color from the pixel in the pixelMap (rgba -> is needed)
+                this._grid.fillPixel(pixel.firstChild.id, this._rgbaToHex(data[i], data[i + 1], data[i + 2], data[i + 3]));
             }else{
+                //if empty, mark as empty
                 this._grid.markAsEmpty(pixel.firstChild.id);
+                //fill pixel on the grid with the defined color for empty pixels
                 this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
-
-
 
             }
 
@@ -178,23 +191,32 @@ _manageThumbnails(){
 
     }
 
+    //clear the DB
     _clearHistory(){
 
         this._sendData.command = "CLEAR";
         this._worker.postMessage(this._sendData);
+
 }
 
+    //saves the actual pixels on the grid to the DB
     _autoSave(buff){
 
-
-
+        //build sendData Object
+        //Define command for the DB worker
         this._sendData.command = "ADD";
+        //update pixelMap with actual buffer(pixels on grid)
         this._sendData.pixelMap = buff;
+        //set timestamp to now
         this._sendData.timestamp = Date.now();
+        //set prev_timestamp to the timestamp of last gridStep
         this._sendData.prev_timestamp = this._actualGridStep.timestamp;
+        //send object to worker
         this._worker.postMessage(this._sendData);
 
+        //Set command to get last saved gridStep
         this._sendData.command = "GET_ACTUAL";
+        //send object to worker
         this._worker.postMessage(this._sendData);
 
 
@@ -202,30 +224,35 @@ _manageThumbnails(){
 
     _getPrevPixel(){
 
+        //build sendData Object
+        //Define command for the DB worker
         this._sendData.command = "GET_PREV";
+        //set timestamp to timestamp of the actual gridStep
         this._sendData.timestamp = this._actualGridStep.timestamp;
+        //set prev_timestamp to prev_timestamp of the actual gridStep
         this._sendData.prev_timestamp = this._actualGridStep.prev_timestamp;
-
+        //send object to worker
         this._worker.postMessage(this._sendData);
 
     }
 
-    _RGBAToHexA(r,g,b,a) {
-        r = r.toString(16);
-        g = g.toString(16);
-        b = b.toString(16);
-        a = a.toString(16);
+    //Converts the red,green,blue,alpha to HEX
+    _rgbaToHex(red,green,blue,alpha) {
+        red = red.toString(16);
+        green = green.toString(16);
+        blue = blue.toString(16);
+        alpha = alpha.toString(16);
 
-        if (r.length == 1)
-            r = "0" + r;
-        if (g.length == 1)
-            g = "0" + g;
-        if (b.length == 1)
-            b = "0" + b;
-        if (a.length == 1)
-            a = "0" + a;
+        if (red.length == 1)
+            red = "0" + red;
+        if (green.length == 1)
+            green = "0" + green;
+        if (blue.length == 1)
+            blue = "0" + blue;
+        if (alpha.length == 1)
+            alpha = "0" + alpha;
 
-        return "#" + r + g + b + a;
+        return "#" + red + green + blue + alpha;
     }
 
     //
