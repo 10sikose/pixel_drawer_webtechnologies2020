@@ -48,144 +48,142 @@ export default class Controller {
 
 
 
-//Saves a empty pixelMap to the DB
-_initFirstPixelMap(){
-    //Wait 500 msec to be sure that DB is created
-    setTimeout(() => {
-        this._autoSave(this._saveModel._generatePixelMap(this._grid));
-    }, 500);
+    //Saves a empty pixelMap to the DB
+    _initFirstPixelMap() {
+        //Wait 500 msec to be sure that DB is created
+        setTimeout(() => {
+            this._autoSave(this._saveModel._generatePixelMap(this._grid));
+        }, 500);
 
-}
-// Add event listeners to the thumbnails boxes
-_manageThumbnails(){
-  let contr = this;
-  let dragging = null;
+    }
+    // Add event listeners to the thumbnails boxes
+    _manageThumbnails() {
+      let contr = this;
+      let dragging = null;
 
-        // Begin the Dragging Process
-        function handleDragStart(e) {
-          this.style.opacity = '0.5';
+            // Begin the Dragging Process
+            function handleDragStart(e) {
+              this.style.opacity = '0.5';
 
-          // Copy reference to Box being Dragged
-          dragging = this;
+              // Copy reference to Box being Dragged
+              dragging = this;
 
-          // Propagate the current contents of dragged box
-          e.dataTransfer.effectAllowed = 'move';
-          e.dataTransfer.setData('text/html', this.innerHTML);
-        }
-
-        // Handle Drag End
-        function handleDragEnd(e) {
-          this.style.opacity = '1';
-
-          // Reset Box States back to normal
-          thumbs.forEach(function(thumb) {
-            if(thumb.nodeName == 'DIV'){
-              thumb.classList.remove('over');
+              // Propagate the current contents of dragged box
+              e.dataTransfer.effectAllowed = 'move';
+              e.dataTransfer.setData('text/html', this.innerHTML);
             }
 
-        });
-        }
+            // Handle Drag End
+            function handleDragEnd(e) {
+              this.style.opacity = '1';
 
-        // Handle box overlap while dragging
-        function handleDragOver(e) {
-          // If we just drag the the thumbnail over something the event should
-          // be propagated further and the default action (ening the drag) should
-          // be prevented
-          if (e.preventDefault) {
-            e.preventDefault();
-          }
-          // Propagate Data of dragged Box
-          e.dataTransfer.dropEffect = 'move';
-          return false;
-        }
+              // Reset Box States back to normal
+              thumbs.forEach(function(thumb) {
+                if(thumb.nodeName == 'DIV'){
+                  thumb.classList.remove('over');
+                }
 
-        // Handle boxes starting to overlap while dragging
-        function handleDragEnter(e) {
-          this.classList.add('over');
-          return false;
-        }
-
-        // Handle boxes stopping to overlap while dragging
-        function handleDragLeave(e) {
-          this.classList.remove('over');
-        }
-
-        // Complete Box Drop
-        function handleDrop(e) {
-             // Stop event propagation
-              e.stopPropagation();
-
-            // If element is draged to different slot than self
-            if (dragging != this) {
-
-              //swap thumbnail box contens
-              dragging.innerHTML = this.innerHTML;
-              this.innerHTML = e.dataTransfer.getData('text/html');
-              dragging.style.opacity = '1';
-
-            // Re-Add Event listener for the download Buttons of the swaped thumbnails
-            this.firstElementChild.addEventListener('click', event => {
-            console.log(this.lastElementChild.src);
-
-            if(this.lastElementChild.src.match(".*(empty\.png)$")) {
-              contr._popup.activateFilter();
-              contr._popup.setMessage(MESSAGES.emptySave);
-              contr._popup.activatePopup();
-            }
-            else {
-              let downloadLink = document.createElement('a');
-              let ev;
-              downloadLink.href = this.lastElementChild.src;
-              downloadLink.download = ( 'frame.png');
-              if (document.createEvent) {
-                ev = document.createEvent("MouseEvents");
-                ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                downloadLink.dispatchEvent(ev);
-              } else if (downloadLink.fireEvent) {
-                downloadLink.fireEvent("onclick");
-              }
-            }
-            });
-
-
-            dragging.firstElementChild.addEventListener('click', event => {
-            console.log(dragging.lastElementChild.src);
-            if(dragging.lastElementChild.src.match(".*(empty\.png)$")) {
-              contr._popup.activateFilter();
-              contr._popup.setMessage(MESSAGES.emptySave);
-              contr._popup.activatePopup();
-            }
-            else {
-              let downloadLink = document.createElement('a');
-              let ev;
-              downloadLink.href = dragging.lastElementChild.src;
-              downloadLink.download = ( 'frame.png');
-              if (document.createEvent) {
-                ev = document.createEvent("MouseEvents");
-                ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                downloadLink.dispatchEvent(ev);
-              } else if (downloadLink.fireEvent) {
-                downloadLink.fireEvent("onclick");
-              }
-            }
             });
             }
-            return false;
-          }
 
-        // Add event listeners for DnD grid
-        let thumbs = this._thumbnails.getContainer().childNodes;
-        thumbs.forEach(function(thumb) {
-          if(thumb.nodeName == 'DIV'){
-            thumb.addEventListener('dragstart', handleDragStart, false);
-            thumb.addEventListener('dragenter', handleDragEnter, false);
-            thumb.addEventListener('dragover', handleDragOver, false);
-            thumb.addEventListener('dragleave', handleDragLeave, false);
-            thumb.addEventListener('drop', handleDrop, false);
-            thumb.addEventListener('dragend', handleDragEnd, false);
-          }
-        });
-}
+            // Handle box overlap while dragging
+            function handleDragOver(e) {
+              // If we just drag the the thumbnail over something the event should
+              // be propagated further and the default action (ening the drag) should
+              // be prevented
+              if (e.preventDefault) {
+                e.preventDefault();
+              }
+              // Propagate Data of dragged Box
+              e.dataTransfer.dropEffect = 'move';
+              return false;
+            }
+
+            // Handle boxes starting to overlap while dragging
+            function handleDragEnter(e) {
+              this.classList.add('over');
+              return false;
+            }
+
+            // Handle boxes stopping to overlap while dragging
+            function handleDragLeave(e) {
+              this.classList.remove('over');
+            }
+
+            // Complete Box Drop
+            function handleDrop(e) {
+                // Stop event propagation
+                  e.stopPropagation();
+
+                // If element is draged to different slot than self
+                if (dragging != this) {
+
+                  //swap thumbnail box contens
+                  dragging.innerHTML = this.innerHTML;
+                  this.innerHTML = e.dataTransfer.getData('text/html');
+                  dragging.style.opacity = '1';
+
+                // Re-Add Event listener for the download Buttons of the swaped thumbnails
+                this.firstElementChild.addEventListener('click', event => {
+
+                if(this.lastElementChild.src.match(".*(empty\.png)$")) {
+                  contr._popup.activateFilter();
+                  contr._popup.setMessage(MESSAGES.emptySave);
+                  contr._popup.activatePopup();
+                }
+                else {
+                  let downloadLink = document.createElement('a');
+                  let ev;
+                  downloadLink.href = this.lastElementChild.src;
+                  downloadLink.download = ( 'frame.png');
+                  if (document.createEvent) {
+                    ev = document.createEvent("MouseEvents");
+                    ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    downloadLink.dispatchEvent(ev);
+                  } else if (downloadLink.fireEvent) {
+                    downloadLink.fireEvent("onclick");
+                  }
+                }
+                });
+
+
+                dragging.firstElementChild.addEventListener('click', event => {
+                if(dragging.lastElementChild.src.match(".*(empty\.png)$")) {
+                  contr._popup.activateFilter();
+                  contr._popup.setMessage(MESSAGES.emptySave);
+                  contr._popup.activatePopup();
+                }
+                else {
+                  let downloadLink = document.createElement('a');
+                  let ev;
+                  downloadLink.href = dragging.lastElementChild.src;
+                  downloadLink.download = ( 'frame.png');
+                  if (document.createEvent) {
+                    ev = document.createEvent("MouseEvents");
+                    ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    downloadLink.dispatchEvent(ev);
+                  } else if (downloadLink.fireEvent) {
+                    downloadLink.fireEvent("onclick");
+                  }
+                }
+                });
+                }
+                return false;
+              }
+
+            // Add event listeners for DnD grid
+            let thumbs = this._thumbnails.getContainer().childNodes;
+            thumbs.forEach(function(thumb) {
+              if(thumb.nodeName == 'DIV'){
+                thumb.addEventListener('dragstart', handleDragStart, false);
+                thumb.addEventListener('dragenter', handleDragEnter, false);
+                thumb.addEventListener('dragover', handleDragOver, false);
+                thumb.addEventListener('dragleave', handleDragLeave, false);
+                thumb.addEventListener('drop', handleDrop, false);
+                thumb.addEventListener('dragend', handleDragEnd, false);
+              }
+            });
+    }
 
     //register the web worker
     _registerWorker() {
@@ -239,7 +237,7 @@ _manageThumbnails(){
         this._sendData.command = "CLEAR";
         this._worker.postMessage(this._sendData);
 
-}
+    }
 
     //saves the actual pixels on the grid to the DB
     _autoSave(buff){
@@ -307,6 +305,8 @@ _manageThumbnails(){
 
         //IF USER RELEASES MOUSE, SET _isMouseDown TO FALSE
         document.addEventListener('mouseup', event => {
+          //If isMouseDown is true, this means user was changing the grad
+          //auto save their progress
           if(this._isMouseDown) {
             this._autoSave(this._saveModel._generatePixelMap(this._grid));
           }
@@ -373,27 +373,25 @@ _manageThumbnails(){
     _manageSaveButton() {
       //MANAGES THE SAVE FUNCTIONALITY
       this._toolBox.getSaveButton().addEventListener('click', event => {
-        this._draw = false;
-        this._erase = false;
-        this._toolBox.markPressed(this._toolBox.getSaveButton().id);
+        //determine if user wants cropped or uncropped image
         let uncropped = this._grid.getSaveUncropped();
 
+        //If grid empty, warn user with popup message
         if(this._grid.isGridEmpty()) {
           this._popup.activateFilter();
           this._popup.setMessage(MESSAGES.emptySave);
           this._popup.activatePopup();
         }
+        //Else convert image to png and save it in thumbnail container
         else {
           let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
           let downloadLink = document.createElement('a'), ev;
 
+          //shift previously saved images to the right
+          //most recent image always occupies the leftmost thumbnail
           this._thumbnails.shiftRight();
 
           this._thumbnails.setNewThumbnail(img);
-
-          this._draw = true;
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
 
         }
       });
@@ -402,19 +400,18 @@ _manageThumbnails(){
     _manageDownloadButtons() {
       //IF USER CLICKS TOOLBOX DOWNLOAD ICON, DOWNLOAD THE GRID IMAGE
       this._toolBox.getDownloadButton().addEventListener('click', event => {
-        this._draw = false;
-        this._erase = false;
-        this._toolBox.markPressed(this._toolBox.getDownloadButton().id);
+        //determine if user wants cropped or uncropped image
         let uncropped = this._grid.getSaveUncropped();
 
+        //If grid empty, warn user with popup message
         if(this._grid.isGridEmpty()) {
           this._popup.activateFilter();
           this._popup.setMessage(MESSAGES.emptySave);
           this._popup.activatePopup();
         }
+        //else convert image to png and commence download
         else {
           let img = this._saveModel.downloadPicture(this._grid.getGridRoot(), uncropped);
-          //console.log("Inside Controllers");
           let downloadLink = document.createElement('a'), ev;
           downloadLink.href = img;
           let fileName = this._grid.getTitleForm().value;
@@ -432,30 +429,25 @@ _manageThumbnails(){
           }
         }
 
-        this._draw = true;
-        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-
       });
 
       //IF USER PRESSES A THUMBNAIL'S DOWNLOAD ICON, DOWNLOADS THE IMAGE
       let thumbs = this._thumbnails.getContainer().childNodes;
       for(let i = 1; i<thumbs.length; i+=2)
         thumbs[i].firstElementChild.addEventListener('click', event => {
-        console.log(thumbs[i].lastElementChild.src);
 
+        //If thumbnail empty, warn user with popup message
         if(thumbs[i].lastElementChild.src.match(".*(empty\.png)$")) {
           this._popup.activateFilter();
           this._popup.setMessage(MESSAGES.emptySave);
           this._popup.activatePopup();
         }
+        //else commence download
         else {
 
-          //console.log("Inside Controllers");
           let downloadLink = document.createElement('a');
           let ev;
-          console.log(thumbs[i].lastElementChild.src);
           downloadLink.href = thumbs[i].lastElementChild.src;
-          console.log(downloadLink.href);
 
           downloadLink.download = (Math.floor(i/2) + 1).toString() + '.png';
 
@@ -475,34 +467,24 @@ _manageThumbnails(){
       //IF USER PRESSES CLEAR BUTTON, RESETS THE GRID
       this._toolBox.getClearButton().addEventListener('click', event => {
         this._isMouseDown = false;
-        this._draw = false;
-        this._erase = false;
-        this._toolBox.markPressed(this._toolBox.getClearButton().id);
 
         this._grid.getPixels().forEach(pixel => {
 
-              this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
-              this._grid.markAsEmpty(pixel.firstChild.id);
+          //To reset the grid, we need to fill each pixel with the empty color (default color of grid)
+          //and then mark them as empty
+          this._grid.fillPixel(pixel.firstChild.id, COLORS.empty);
+          this._grid.markAsEmpty(pixel.firstChild.id);
 
 
         });
-
-        this._draw = true;
-
-        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
       });
     }
 
     _managePrevButton() {
       //IF USER PRESSES UNDO BUTTON, RESETS LATEST CHANGE(S)
       this._toolBox.getPrevButton().addEventListener('click', event => {
-        this._draw = false;
-        this._erase = false;
-        this._toolBox.markPressed(this._toolBox.getPrevButton().id);
-        this._getPrevPixel();
 
-        this._draw = true;
-        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+        this._getPrevPixel();
 
       });
     }
@@ -510,8 +492,6 @@ _manageThumbnails(){
     _manageHelpButton() {
       //IF USER PRESSES HELP BUTTON, A HELPFUL POPUP MESSAGE APPEARS
       this._toolBox.getHelpButton().addEventListener('click', event => {
-        this._draw = false;
-        this._erase = false;
         this._toolBox.markPressed(this._toolBox.getHelpButton().id);
 
         this._popup.activateFilter();
@@ -523,19 +503,24 @@ _manageThumbnails(){
     }
 
     _managePopupFilter() {
-        //Following two event listeners hide the popup
-        this._popup.getPopupClose().addEventListener('click', event => {
-          this._popup.deactivatePopup();
-          this._popup.deactivateFilter();
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });
 
-        this._popup.getFilter().addEventListener('click', event => {
+        //callback for event listeners below
+        const turnOffFilter = event => {
           this._popup.deactivatePopup();
           this._popup.deactivateFilter();
-          this._draw = true;
-          this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });
+          if(this._draw) {
+            this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+          }
+          else {
+            this._toolBox.markPressed(this._toolBox.getEraser().id);
+          }
+        }
+
+        //Following two event listeners hide the popup
+        this._popup.getPopupClose().addEventListener('click', turnOffFilter);
+
+        this._popup.getFilter().addEventListener('click', turnOffFilter);
+
     }
 
 
@@ -543,15 +528,22 @@ _manageThumbnails(){
       //SETS this._currentColor WHENEVER USERS PICKS A NEW COLOR
       this._toolBox.getColorBox().addEventListener('input', event => {
         this._currentColor = event.target.value;
+
+        //if user picks a new color, it is implied he wants to draw again
+        //set draw to true and erase to false
+        this._draw = true;
+        this._erase = false;
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
       })
     }
 
     //
-    //EVENT LISTENERS FOR DRAWING ON GRID
+    //EVENT LISTENERS FOR DRAWING ON GRID (DRAW + ERASE)
     _controlDrawing() {
       //IF USER PRESSES MOUSE WHILE OVER GRID, FILL PIXELS
       this._grid.getPixels().forEach(pixel => {
         pixel.addEventListener('mousedown', event => {
+          //If erase is true, set color to empty
           if(this._erase)
             this._currentColor = COLORS.empty;
 
@@ -559,10 +551,11 @@ _manageThumbnails(){
             this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
           }
 
-
+          //If draw is true and erase false, mark pixel as filled
           if (this._draw && !this._erase){
             this._grid.markAsFilled(pixel.firstChild.id);
           }
+          //if erase is true and draw false, mark pixel as empty
           else if(!this._draw && this._erase) {
             this._grid.markAsEmpty(pixel.firstChild.id);
           }
@@ -579,10 +572,11 @@ _manageThumbnails(){
               if(this._draw || this._erase) {
                 this._grid.fillPixel(pixel.firstChild.id, this._currentColor);
               }
-
+              //If draw is true and erase false, mark pixel as filled
               if (this._draw && !this._erase){
                 this._grid.markAsFilled(pixel.firstChild.id);
               }
+              //if erase is true and draw false, mark pixel as empty
               else if(!this._draw && this._erase) {
                 this._grid.markAsEmpty(pixel.firstChild.id);
               }

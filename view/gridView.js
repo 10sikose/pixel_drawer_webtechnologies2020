@@ -59,7 +59,6 @@ export default class GridView {
     }
 
     getSaveUncropped() {
-        //console.log(ELEMENTS.saveUncropped.checked);
         return ELEMENTS.saveUncropped.checked;
     }
 

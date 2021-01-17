@@ -11,33 +11,12 @@ export default class SaveModel {
     getHeight(){ return this._height;}
 ////
 
-    // Method that returns saved image object to save button
-    savePicture(grid, uncropped) {
-        let limits;
-        if(!uncropped)
-          limits = this._setLimits(grid);
-        else {
-          limits = {
-             top: 0,
-             bottom: grid.childNodes.length - 1,
-             left: 0,
-             right: grid.childNodes[0].childNodes.length -1
-         }
-        }
-
-        return this._redrawInCanvas(grid, limits);
-
-    }
-
-    // Method that returns saved image object to download button
+    // Method that returns saved image object
     downloadPicture(grid, uncropped){
-    //  console.log("Inside SaveModel");
       let limits;
       if(!uncropped)
         limits = this._setLimits(grid);
       else {
-        //console.log("Bottom:" + (grid.childNodes.length - 1));
-        //console.log("right:" + (grid.childNodes[0].childNodes.length - 1));
 
          limits = {
             top: 0,
@@ -125,8 +104,6 @@ export default class SaveModel {
 
         ctx.putImageData(imgData,0,0);
         let dataUri = cnvas.toDataURL();
-        console.log(dataUri);
-        //console.log("I am here");
         return dataUri;
     }
 
