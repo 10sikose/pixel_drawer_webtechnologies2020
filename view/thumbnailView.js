@@ -10,10 +10,13 @@ export default class ThumbnailView {
         this._container = ELEMENTS.thumbnailContainer;
     }
 
+    // Create Space in Thumbnail list for new Save
     shiftRight() {
-        const THUMBS = this._container.childNodes;
-        let before = THUMBS[1].lastElementChild.src;
+        let THUMBS = this._container.childNodes;
+        let before = THUMBS[1].lastElementChild.src; // last child element is the Image element
 
+        // We need to skip over the empty text elements between the
+        // thumbnail boxes
         for(let i = 3; i < THUMBS.length; i+=2){
             if(THUMBS[i].nodeName == 'DIV'){
 
@@ -28,12 +31,13 @@ export default class ThumbnailView {
         }
     }
 
+    // Replace Thumbnail Image
     setNewThumbnail(img) {
-        const THUMBS = this._container.childNodes;
+        let THUMBS = this._container.childNodes;
 
         THUMBS[1].lastElementChild.src = img;
     }
-    
+
     //
     //GETTERS
 

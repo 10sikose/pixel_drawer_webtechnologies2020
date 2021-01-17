@@ -56,27 +56,28 @@ _initFirstPixelMap(){
     }, 500);
 
 }
-
+// Add event listeners to the thumbnails boxes
 _manageThumbnails(){
-
+  let contr = this;
   let dragging = null;
 
+        // Begin the Dragging Process
         function handleDragStart(e) {
           this.style.opacity = '0.5';
 
+          // Copy reference to Box being Dragged
           dragging = this;
 
-        //  console.log(":Picker Up :");
-
+          // Propagate the current contents of dragged box
           e.dataTransfer.effectAllowed = 'move';
           e.dataTransfer.setData('text/html', this.innerHTML);
-        //  console.log(e.dataTransfer.getData('text/html'));
         }
 
-
+        // Handle Drag End
         function handleDragEnd(e) {
           this.style.opacity = '1';
 
+          // Reset Box States back to normal
           thumbs.forEach(function(thumb) {
             if(thumb.nodeName == 'DIV'){
               thumb.classList.remove('over');
@@ -85,59 +86,107 @@ _manageThumbnails(){
         });
         }
 
+        // Handle box overlap while dragging
         function handleDragOver(e) {
-          //????
+          // If we just drag the the thumbnail over something the event should
+          // be propagated further and the default action (ening the drag) should
+          // be prevented
           if (e.preventDefault) {
             e.preventDefault();
           }
-
+          // Propagate Data of dragged Box
           e.dataTransfer.dropEffect = 'move';
-
           return false;
         }
 
+        // Handle boxes starting to overlap while dragging
         function handleDragEnter(e) {
           this.classList.add('over');
           return false;
         }
 
+        // Handle boxes stopping to overlap while dragging
         function handleDragLeave(e) {
           this.classList.remove('over');
         }
 
-
-          function handleDrop(e) {
+        // Complete Box Drop
+        function handleDrop(e) {
+             // Stop event propagation
               e.stopPropagation();
 
-            //console.log(":Drop:");
+            // If element is draged to different slot than self
             if (dragging != this) {
 
-            //  console.log(e.dataTransfer.getData('text/html'));
-              dragging.innerHTML = this.innerHTML; //swap thumbnails
+              //swap thumbnail box contens
+              dragging.innerHTML = this.innerHTML;
               this.innerHTML = e.dataTransfer.getData('text/html');
               dragging.style.opacity = '1';
-            }
 
+            // Re-Add Event listener for the download Buttons of the swaped thumbnails
+            this.firstElementChild.addEventListener('click', event => {
+            console.log(this.lastElementChild.src);
+
+            if(this.lastElementChild.src.match(".*(empty\.png)$")) {
+              contr._popup.activateFilter();
+              contr._popup.setMessage(MESSAGES.emptySave);
+              contr._popup.activatePopup();
+            }
+            else {
+              let downloadLink = document.createElement('a');
+              let ev;
+              downloadLink.href = this.lastElementChild.src;
+              downloadLink.download = ( 'frame.png');
+              if (document.createEvent) {
+                ev = document.createEvent("MouseEvents");
+                ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                downloadLink.dispatchEvent(ev);
+              } else if (downloadLink.fireEvent) {
+                downloadLink.fireEvent("onclick");
+              }
+            }
+            });
+
+
+            dragging.firstElementChild.addEventListener('click', event => {
+            console.log(dragging.lastElementChild.src);
+            if(dragging.lastElementChild.src.match(".*(empty\.png)$")) {
+              contr._popup.activateFilter();
+              contr._popup.setMessage(MESSAGES.emptySave);
+              contr._popup.activatePopup();
+            }
+            else {
+              let downloadLink = document.createElement('a');
+              let ev;
+              downloadLink.href = dragging.lastElementChild.src;
+              downloadLink.download = ( 'frame.png');
+              if (document.createEvent) {
+                ev = document.createEvent("MouseEvents");
+                ev.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                downloadLink.dispatchEvent(ev);
+              } else if (downloadLink.fireEvent) {
+                downloadLink.fireEvent("onclick");
+              }
+            }
+            });
+            }
             return false;
           }
 
+        // Add event listeners for DnD grid
         let thumbs = this._thumbnails.getContainer().childNodes;
-        //console.log(thumbs);
         thumbs.forEach(function(thumb) {
           if(thumb.nodeName == 'DIV'){
-          //  console.log(thumb.firstChild.id);
             thumb.addEventListener('dragstart', handleDragStart, false);
             thumb.addEventListener('dragenter', handleDragEnter, false);
             thumb.addEventListener('dragover', handleDragOver, false);
             thumb.addEventListener('dragleave', handleDragLeave, false);
             thumb.addEventListener('drop', handleDrop, false);
             thumb.addEventListener('dragend', handleDragEnd, false);
-
           }
-
         });
-
 }
+
     //register the web worker
     _registerWorker() {
 
@@ -261,9 +310,9 @@ _manageThumbnails(){
           if(this._isMouseDown) {
             this._autoSave(this._saveModel._generatePixelMap(this._grid));
           }
-          
+
           this._isMouseDown = false;
-          
+
         });
 
     }
@@ -273,12 +322,13 @@ _manageThumbnails(){
       this._toolBox.getHeader().addEventListener('mousedown', event => {
         event = event || window.event;
         event.preventDefault();
-        
+
         let newx = event.clientX;
         let newy = event.clientY;
-        
+
         const dragElement = e => {
           e = e || window.event;
+          // Propagate Event
           e.preventDefault();
           // calculate the new cursor position:
           let oldx = newx - e.clientX;
@@ -286,16 +336,16 @@ _manageThumbnails(){
           newx = e.clientX;
           newy = e.clientY;
           // set the element's new position:
-          
+
           this._toolBox.setPosY(oldy);
           this._toolBox.setPosX(oldx);
         }
-        
+
         document.onmouseup = function(){
           document.onmouseup = null;
           document.onmousemove = null
-        } 
-        
+        }
+
         document.onmousemove = dragElement;
       });
     }
@@ -307,7 +357,7 @@ _manageThumbnails(){
         this._currentColor = this._toolBox.getColorBox().value;
         this._erase = false;
         this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-      });      
+      });
     }
 
     _manageEraseButton() {
@@ -346,8 +396,7 @@ _manageThumbnails(){
 
 
         }
-
-      });      
+      });
     }
 
     _manageDownloadButtons() {
@@ -402,10 +451,11 @@ _manageThumbnails(){
         else {
 
           //console.log("Inside Controllers");
-          let downloadLink = document.createElement('a'), ev;
-          //console.log(thumbs[i].lastElementChild.src);
+          let downloadLink = document.createElement('a');
+          let ev;
+          console.log(thumbs[i].lastElementChild.src);
           downloadLink.href = thumbs[i].lastElementChild.src;
-          //console.log(downloadLink.href);
+          console.log(downloadLink.href);
 
           downloadLink.download = (Math.floor(i/2) + 1).toString() + '.png';
 
@@ -439,8 +489,8 @@ _manageThumbnails(){
 
         this._draw = true;
 
-        this._toolBox.markPressed(this._toolBox.getDrawButton().id);     
-      }); 
+        this._toolBox.markPressed(this._toolBox.getDrawButton().id);
+      });
     }
 
     _managePrevButton() {
@@ -469,7 +519,7 @@ _manageThumbnails(){
           + MESSAGES.prevHelp + MESSAGES.eraseHelp + MESSAGES.saveHelp
           + MESSAGES.downloadHelp + MESSAGES.clearHelp);
         this._popup.activatePopup();
-      });      
+      });
     }
 
     _managePopupFilter() {
@@ -485,7 +535,7 @@ _manageThumbnails(){
           this._popup.deactivateFilter();
           this._draw = true;
           this._toolBox.markPressed(this._toolBox.getDrawButton().id);
-        });      
+        });
     }
 
 

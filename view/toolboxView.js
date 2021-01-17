@@ -55,12 +55,9 @@ export default class ToolBoxView {
         return this._prevButton;
     }
 
-    //////////////////// GABI
     getDownloadButton() {
         return this._downloadButton;
     }
-    //////////////////// GABI
-
 
     getEraser() {
         return this._eraseButton;

@@ -19,7 +19,7 @@ export default class GridView {
 
     }
 
-
+    //Function to draw the grid on startup
     _drawGrid() {
         for(let w = 0; w < GRID_WIDTH; w++)
         {
@@ -85,13 +85,14 @@ export default class GridView {
     }
 
 
+    // Color grid pixel to given color
     fillPixel(id, color) {
         let pixel = document.getElementById(id);
 
         pixel.style.fill = color;
     }
 
-
+    // Set the pixel state to filled
     markAsFilled(id) {
         let pixel = document.getElementById(id);
 
@@ -99,6 +100,7 @@ export default class GridView {
         pixel.classList.remove('empty');
     }
 
+    // Set the pixel state to filled
     markAsEmpty(id) {
         let pixel = document.getElementById(id);
 
@@ -106,6 +108,7 @@ export default class GridView {
         pixel.classList.remove('filled');
     }
 
+    // Check if drawing surface is empty
     isGridEmpty() {
         let filledPixel = document.querySelector('.filled');
 

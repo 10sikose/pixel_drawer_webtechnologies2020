@@ -37,14 +37,17 @@ export default class MessageView {
 
     ////
 
+    // Activate Filter
     activateFilter() {
         this._filter.classList.add('active-filter');
     }
 
+    // Deactivate Filter
     deactivateFilter() {
         this._filter.classList.remove('active-filter');
     }
 
+    // Check Popup state
     isPopupActive() {
         if(this.popupContainer.classList.contains('active-popup'))
         {
@@ -53,10 +56,12 @@ export default class MessageView {
         else return false;
     }
 
+    // Open Popup
     activatePopup() {
         this._popupContainer.classList.add('active-popup');
     }
 
+    // Close Popup
     deactivatePopup() {
         this._popupContainer.classList.remove('active-popup');
     }
