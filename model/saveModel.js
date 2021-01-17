@@ -6,12 +6,12 @@ export default class SaveModel {
       this._height = 38;
 
     }
-
+/// GETTERS
     getWidth(){ return this._width;}
     getHeight(){ return this._height;}
+////
 
-
-
+    // Method that returns saved image object to save button
     savePicture(grid, uncropped) {
         let limits;
         if(!uncropped)
@@ -29,6 +29,7 @@ export default class SaveModel {
 
     }
 
+    // Method that returns saved image object to download button
     downloadPicture(grid, uncropped){
     //  console.log("Inside SaveModel");
       let limits;
@@ -50,6 +51,7 @@ export default class SaveModel {
 
     }
 
+    // Return coordinates of cropped image
     _setLimits(grid) {
         let top = -1;
         let bottom = -1;
@@ -100,6 +102,7 @@ export default class SaveModel {
         return limits;
     }
 
+    // Return a Canvas rendering of the Grid
     _redrawInCanvas(grid, limits) {
 
         let w = (limits.right - limits.left + 1) * CONSTANTS.pixelWidth;
@@ -107,16 +110,17 @@ export default class SaveModel {
 
         this._width = w;
         this._height = h;
+        // Create and array that can be converted to
+        // used to create a Image Data object
         let buff = this._populateClampedArray(grid, limits, w, h);
 
-        //TEMP SOLUTION
+
         let cnvas = document.createElement('canvas'),
         ctx = cnvas.getContext('2d');
 
         cnvas.width = w;
         cnvas.height = h;
-        //  var imgData = ctx.createImageData(w, h);
-        console.log(buff);
+
         let imgData = new ImageData(buff, w, h);
 
         ctx.putImageData(imgData,0,0);
@@ -126,6 +130,7 @@ export default class SaveModel {
         return dataUri;
     }
 
+    // Convert Drawing Surface to a RGBA-Pixel array
     _populateClampedArray(grid, limits, width, height) {
 
         let buff = new Uint8ClampedArray(width * height * 4);
@@ -182,6 +187,7 @@ export default class SaveModel {
         return buff;
     }
 
+    // Convert Drawing Surface to a RGBA-Pixel array with pixels of size 1 
     _generatePixelMap(gridview) {
 
         let grid = gridview.getGridRoot();
